@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl http://localhost:3000/api/stats)",
+      "Bash(curl -s -X POST http://localhost:3000/api/scrape/hellowork -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":5,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/scrape/welcome_to_the_jungle -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":3,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s \"https://www.welcometothejungle.com/fr/jobs?scope=all&query=stage\")",
+      "Bash(curl -X POST \"https://CSEKHVMS53-dsn.algolia.net/1/indexes/wttj_jobs_production_*/queries\" -H \"X-Algolia-Application-Id: CSEKHVMS53\" -H \"X-Algolia-API-Key: 4bd8f6215d0cc52b26430765769e65a0\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"stage\"\",\"\"page\"\":0,\"\"hitsPerPage\"\":5}')",
+      "Bash(curl -X POST \"https://CSEKHVMS53-dsn.algolia.net/1/indexes/wttj_jobs_production_production*/search\" -H \"X-Algolia-Application-Id: CSEKHVMS53\" -H \"X-Algolia-API-Key: 4bd8f6215d0cc52b26430765769e65a0\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"stage\"\",\"\"page\"\":0,\"\"hitsPerPage\"\":5}')",
+      "Bash(curl -X POST \"https://CSEKHVMS53-dsn.algolia.net/1/indexes/*/search\" -H \"X-Algolia-Application-Id: CSEKHVMS53\" -H \"X-Algolia-API-Key: 4bd8f6215d0cc52b26430765769e65a0\" -H \"Content-Type: application/json\" -d '{\"\"requests\"\":[{\"\"indexName\"\":\"\"wttj_jobs_production_production\"\",\"\"query\"\":\"\"stage\"\",\"\"params\"\":{\"\"page\"\":0,\"\"hitsPerPage\"\":5}}]}')",
+      "Bash(curl -X GET \"https://CSEKHVMS53-dsn.algolia.net/1/indexes\" -H \"X-Algolia-Application-Id: CSEKHVMS53\" -H \"X-Algolia-API-Key: 4bd8f6215d0cc52b26430765769e65a0\")",
+      "Bash(curl -X POST \"https://api.welcometothejungle.com/v1/search/jobs\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"stage\"\",\"\"page\"\":1,\"\"pageSize\"\":5}')",
+      "WebFetch(domain:www.welcometothejungle.com)",
+      "Bash(curl \"https://api.welcometothejungle.com/coaching/jobs/search?query=stage&page=1&pageSize=5\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/welcome_to_the_jungle\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/jobteaser\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"stage\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\"\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/jobteaser\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"stage\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/jobteaser\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":true}\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/jobteaser\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\")",
+      "Bash(curl \"https://www.jobteaser.com/fr/jobs?page=1&query=stage&location=France\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36\" -s)",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/linkedin\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\")",
+      "Bash(curl -X POST \"http://localhost:3000/api/scrape/linkedin\" -H \"Content-Type: application/json\" -d \"{\"\"type\"\":\"\"stage\"\",\"\"location\"\":\"\"Paris\"\",\"\"maxPages\"\":1,\"\"saveToDB\"\":false}\")",
+      "Bash(curl \"https://www.linkedin.com/jobs/search?keywords=stage&location=France\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36\" -s)",
+      "Bash(curl -s \"http://localhost:3000/api/scrape/hellowork?action=scrape&type=all&maxPages=2&save=true\")",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/scrape/hellowork\" -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":3,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/scrape/jobteaser\" -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":2,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/scrape/linkedin\" -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":2,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/scrape/welcome_to_the_jungle\" -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":2,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/scrape/indeed\" -H \"Content-Type: application/json\" -d '{\"\"type\"\":\"\"all\"\",\"\"maxPages\"\":3,\"\"saveToDB\"\":true}')",
+      "Bash(curl -s \"http://localhost:3000/api/job?limit=10\")",
+      "Bash(npx next build)",
+      "Bash(git pull origin main)",
+      "Bash(git config pull.rebase false)",
+      "Bash(git push origin main)"
+    ]
+  }
+}

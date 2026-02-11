@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Candidatures - JobStudent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-viewed { background-color: #dbeafe; color: #1e40af; }
+        .status-interview { background-color: #bfdbfe; color: #1e40af; }
+        .status-accepted { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">JobStudent</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="mon-profil.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Mon CV
+                    </a>
+                    <a href="candidatures.html" class="text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i> Mes candidatures
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                        <i data-lucide="menu" class="w-6 h-6" id="mobileMenuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden border-t bg-white animate-fadeIn">
+            <div class="px-4 py-4 space-y-3">
+                <a href="index.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Accueil</a>
+                <a href="recherche.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Rechercher</a>
+                <a href="mon-profil.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Mon profil</a>
+                <a href="candidatures.html" class="block px-4 py-3 text-blue-600 font-medium rounded-lg">Mes candidatures</a>
+                <a href="connexion.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white border-b py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mes Candidatures</h1>
+            <p class="text-gray-600 mt-1">Suivez l'évolution de vos candidatures</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                <div class="text-2xl font-bold text-blue-600" id="totalApplications">0</div>
+                <div class="text-sm text-gray-600">Total</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                <div class="text-2xl font-bold text-yellow-600" id="pendingApplications">0</div>
+                <div class="text-sm text-gray-600">En attente</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                <div class="text-2xl font-bold text-blue-600" id="viewedApplications">0</div>
+                <div class="text-sm text-gray-600">Vues</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                <div class="text-2xl font-bold text-purple-600" id="interviewApplications">0</div>
+                <div class="text-sm text-gray-600">Entretiens</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center">
+                <div class="text-2xl font-bold text-green-600" id="acceptedApplications">0</div>
+                <div class="text-sm text-gray-600">Acceptées</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <button onclick="filterApplications('all')" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Tous</button>
+            <button onclick="filterApplications('pending')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">En attente</button>
+            <button onclick="filterApplications('interview')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Entretiens</button>
+            <button onclick="filterApplications('accepted')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Acceptées</button>
+        </div>
+
+        <!-- Applications List -->
+        <div id="applicationsList" class="space-y-4">
+            <!-- Applications will be injected here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-12 hidden">
+            <div class="text-6xl mb-4">💼</div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucune candidature</h3>
+            <p class="text-gray-600">Commencez à postuler à des offres !</p>
+            <a href="recherche.html" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-medium">Rechercher des offres</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2026 JobStudent. Tous droits réservés.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Mentions légales</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Confidentialité</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">CGU</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/candidatures.js"></script>
+</body>
+</html>

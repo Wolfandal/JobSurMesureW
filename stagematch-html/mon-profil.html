@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - JobStudent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">JobStudent</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="mon-profil.html" class="text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Mon CV
+                    </a>
+                    <a href="candidatures.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i> Mes candidatures
+                    </a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                        <i data-lucide="menu" class="w-6 h-6" id="mobileMenuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden border-t bg-white animate-fadeIn">
+            <div class="px-4 py-4 space-y-3">
+                <a href="index.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Accueil</a>
+                <a href="recherche.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Rechercher</a>
+                <a href="mon-profil.html" class="block px-4 py-3 text-blue-600 font-medium rounded-lg">Mon profil</a>
+                <a href="candidatures.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Mes candidatures</a>
+                <a href="#" class="block px-4 py-3 text-red-600 hover:bg-gray-50 rounded-lg font-medium">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white border-b py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mon Profil</h1>
+            <p class="text-gray-600 mt-1">Gérez vos informations et vos documents</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-600 to-green-500 rounded-full mx-auto flex items-center justify-center text-3xl text-white font-bold mb-4">
+                        JD
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">Jean Dupont</h2>
+                    <p class="text-gray-600">jean.dupont@email.com</p>
+                    <p class="text-gray-500 text-sm mt-1">Étudiant en Bachelors +3</p>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm space-y-4">
+                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                        <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">Informations personnelles</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">Mon CV</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                        <i data-lucide="pen-tool" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">Lettre de motivation</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                        <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">Mon parcours</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-blue-600"></i>
+                        <span class="font-medium">Préférences</span>
+                    </a>
+                </div>
+
+                <button onclick="logout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    Déconnexion
+                </button>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Personal Info -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                        Informations personnelles
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                            <input type="text" value="Jean" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                            <input type="text" value="Dupont" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" value="jean.dupont@email.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date de naissance</label>
+                            <input type="date" value="1995-01-15" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CV Section -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                        Mon CV
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-green-800">Jean_Dupont_CV.pdf</p>
+                                    <p class="text-xs text-green-600">Uploadé le 25 janvier 2026</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="p-2 text-green-600 hover:bg-green-100 rounded-lg" onclick="previewCv()">
+                                    <i data-lucide="eye" class="w-5 h-5"></i>
+                                </button>
+                                <button class="p-2 text-red-500 hover:bg-red-100 rounded-lg">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                            <i data-lucide="upload" class="w-5 h-5 text-blue-500"></i>
+                            <span class="text-blue-600 font-medium">Ajouter un nouveau CV</span>
+                            <input type="file" accept=".pdf,.doc,.docx" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- LM Section -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
+                        Lettre de motivation
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-green-800">Jean_Dupont_LM.pdf</p>
+                                    <p class="text-xs text-green-600">Uploadé le 25 janvier 2026</p>
+                                </div>
+                            </div>
+                            <button class="p-2 text-red-500 hover:bg-red-100 rounded-lg">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-500 hover:bg-green-50 transition-colors">
+                            <i data-lucide="upload" class="w-5 h-5 text-green-500"></i>
+                            <span class="text-green-600 font-medium">Ajouter une lettre de motivation</span>
+                            <input type="file" accept=".pdf,.doc,.docx" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-blue-600"></i>
+                        Préférences
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Niveau d'études</label>
+                            <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                                <option>Bac</option>
+                                <option>Bac+1</option>
+                                <option>Bac+2</option>
+                                <option>Bac+3</option>
+                                <option>Bac+4</option>
+                                <option>Bac+5</option>
+                                <option>Bac+6 et plus</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Localisation préférée</label>
+                            <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                                <option>Paris et sa région</option>
+                                <option>Lyon</option>
+                                <option>Marseille</option>
+                                <option>Toulouse</option>
+                                <option>Bordeaux</option>
+                                <option>Nantes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Types d'offres</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-blue-600">
+                                    <span class="text-gray-700">Stage</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-blue-600">
+                                    <span class="text-gray-700">Alternance</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Domaines d'intérêt</label>
+                            <select multiple class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none h-32">
+                                <option>Tech & IT</option>
+                                <option>Marketing</option>
+                                <option>Finance</option>
+                                <option>Consulting</option>
+                                <option>Design</option>
+                                <option selected>Ressources Humaines</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2026 JobStudent. Tous droits réservés.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Mentions légales</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Confidentialité</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">CGU</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CV Modal -->
+    <div id="cvModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Jean Dupont - CV</h3>
+                        <p class="text-sm text-gray-500">Jean_Dupont_CV.pdf</p>
+                    </div>
+                </div>
+                <button onclick="closeCvModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe id="cvPreviewFrame" src="" class="w-full h-[70vh]"></iframe>
+            </div>
+            <div class="p-4 border-t">
+                <button onclick="closeCvModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/mon-profil.js"></script>
+</body>
+</html>

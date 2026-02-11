@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préparation à l'entretien - JobStudent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">JobStudent</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="mon-profil.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Mon CV
+                    </a>
+                    <a href="candidatures.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i> Mes candidatures
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white border-b py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">Préparation à l'entretien</h1>
+            <p class="text-gray-600 mt-1">Optimisez vos chances de succès pour votre entretien</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Company Info -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://ui-avatars.com/api/?name=TS&background=3b82f6&color=fff" alt="Company" class="w-16 h-16 rounded-xl object-cover">
+                        <div>
+                            <h2 class="font-bold text-xl text-gray-900">TechStartup Paris</h2>
+                            <p class="text-gray-600 text-sm">Développeur Full Stack Junior</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="building" class="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Culture d\'entreprise</p>
+                                <p>Startup en pleine croissance, environnement dynamique, travail d\'équipe</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="briefcase" class="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Métiers représentés</p>
+                                <p>Développeurs, Designers, Produit, Marketing</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="lightbulb" class="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Valeurs clés</p>
+                                <p>Innovation, Collaboration, Excellence, Transparence</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 rounded-xl p-6">
+                    <h3 class="font-bold text-purple-900 mb-3 flex items-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                        À retenir
+                    </h3>
+                    <ul class="space-y-2 text-sm text-purple-800">
+                        <li class="flex items-start gap-2">
+                            <span class="font-bold">•</span>
+                            <span>Préparez des questions sur la culture d'entreprise</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="font-bold">•</span>
+                            <span>Soyez prêt à présenter un de vos projets techniques</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="font-bold">•</span>
+                            <span>Montrez votre passion pour l'apprentissage</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Question Sections -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Common Questions -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                        Questions classiques
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-600 pl-4">
+                            <p class="font-medium text-gray-900">Présentez-vous en 2 minutes</p>
+                            <p class="text-gray-600 text-sm mt-1">Concentrez-vous sur votre parcours académique, vos compétences techniques et vos motivations</p>
+                        </div>
+                        <div class="border-l-4 border-blue-600 pl-4">
+                            <p class="font-medium text-gray-900">Pourquoi ce stage chez nous ?</p>
+                            <p class="text-gray-600 text-sm mt-1">Montrez que vous avez étudié l'entreprise et expliquez votre motivation</p>
+                        </div>
+                        <div class="border-l-4 border-blue-600 pl-4">
+                            <p class="font-medium text-gray-900">Décrivez un de vos projets</p>
+                            <p class="text-gray-600 text-sm mt-1">Utilisez la méthode STAR (Situation, Task, Action, Result)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Questions -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="code" class="w-5 h-5 text-blue-600"></i>
+                        Questions techniques (à venir)
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">Cette section sera bientôt disponible avec des questions spécifiques au poste.</p>
+                    <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        Voir la série QCM
+                    </button>
+                </div>
+
+                <!-- QCM Section -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="circle-help" class="w-5 h-5 text-blue-600"></i>
+                        Quiz rapide
+                    </h3>
+                    <div class="space-y-6" id="qcmContainer">
+                        <!-- QCM items will be injected here -->
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="submitQCM()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">Valider les réponses</button>
+                    </div>
+                    <div id="qcmResult" class="mt-4 p-4 rounded-xl hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i data-lucide="circle-check" class="w-8 h-8 text-green-600"></i>
+                            <h4 class="font-bold text-green-900">Résultat du quiz</h4>
+                        </div>
+                        <p class="text-gray-700" id="qcmScore"></p>
+                        <button onclick="resetQCM()" class="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">Recommencer le quiz</button>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-blue-600"></i>
+                        Nos conseils
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                                <span class="font-medium text-green-800">À faire</span>
+                            </div>
+                            <ul class="text-sm text-green-800 space-y-1">
+                                <li>Préparez 2-3 questions à poser</li>
+                                <li>Arrivez 10 minutes à l'avance</li>
+                                <li>Portez une tenue soignée</li>
+                                <li>Apportez votre CV et vos diplômes</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-red-50 rounded-lg">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="x" class="w-5 h-5 text-red-600"></i>
+                                <span class="font-medium text-red-800">À éviter</span>
+                            </div>
+                            <ul class="text-sm text-red-800 space-y-1">
+                                <li>Ne parlez pas mal de vos anciens employeurs</li>
+                                <li>Évitez les réponses trop courtes</li>
+                                <li>Ne mentez pas sur vos compétences</li>
+                                <li>Éteignez votre téléphone</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2026 JobStudent. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/preparation-entretien.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "stagematch-html",
+  "version": "1.0.0",
+  "description": "JobStudent - Platform for finding internships and apprenticeships",
+  "main": "scripts/server.js",
+  "scripts": {
+    "start": "node scripts/server.js",
+    "dev": "node scripts/server.js",
+    "scrape": "node scripts/scrape-jobs.js",
+    "create-db": "node scripts/create-db.js",
+    "validate": "node scripts/validate-db.js"
+  },
+  "keywords": ["jobs", "internship", "alternance", "job-search"],
+  "author": "JobStudent",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "playwright": "^1.58.2",
+    "sqlite3": "^5.1.7"
+  }
+}
