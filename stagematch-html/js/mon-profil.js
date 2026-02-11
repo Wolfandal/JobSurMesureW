@@ -120,6 +120,18 @@ function previewCv() {
         return;
     }
 
+    // Update modal title and filename
+    const cvModalTitle = document.getElementById('cvModalTitle');
+    const cvModalFilename = document.getElementById('cvModalFilename');
+    const cvFileNameEl = document.getElementById('cvFileName');
+
+    if (cvModalTitle) {
+        cvModalTitle.textContent = `${currentUser.firstName} ${currentUser.lastName} - CV`;
+    }
+    if (cvModalFilename && cvFileNameEl) {
+        cvModalFilename.textContent = cvFileNameEl.textContent;
+    }
+
     document.getElementById('cvPreviewFrame').src = cvUrl;
     document.getElementById('cvModal').classList.remove('hidden');
 }
