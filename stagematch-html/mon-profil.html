@@ -134,7 +134,6 @@
                             <input type="date" id="dateOfBirthInput" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
                         </div>
                     </div>
-                    <button id="saveProfileBtn" onclick="saveProfile()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">Sauvegarder les informations</button>
                 </div>
 
                 <!-- CV Section -->
@@ -201,8 +200,6 @@
                         <p id="lmPlaceholder" class="text-center text-gray-500 text-sm">Cliquez pour uploader votre lettre de motivation</p>
                     </div>
                 </div>
-                    </div>
-                </div>
 
                 <!-- Preferences -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
@@ -245,7 +242,36 @@
                             <input type="text" id="preferredDomainsInput" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Tech & IT, Marketing, Finance">
                         </div>
                     </div>
-                    <button id="saveProfileBtn" onclick="saveProfile()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">Sauvegarder mes préférences</button>
+                </div>
+
+                <!-- Skills & Education -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                        Mon parcours
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">École / Université</label>
+                            <input type="text" id="schoolInput" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Nom de votre établissement">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Compétences (séparées par des virgules)</label>
+                            <input type="text" id="skillsInput" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" placeholder="JavaScript, Python, React, etc.">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Langues (séparées par des virgules)</label>
+                            <input type="text" id="languagesInput" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Français, Anglais, etc.">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <button id="saveProfileBtn" onclick="saveProfile()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        Sauvegarder mon profil
+                    </button>
                 </div>
             </div>
         </div>

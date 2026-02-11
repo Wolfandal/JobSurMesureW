@@ -3,11 +3,19 @@
 const API_URL = 'http://localhost:3000/api';
 let currentUser = null;
 
+// File storage keys - will be set when user is loaded
+let cvFileKey = '';
+let lmFileKey = '';
+
 // Get current user from session
 function getCurrentUser() {
     const user = sessionStorage.getItem('jobsurmesure_user');
     if (user) {
-        return JSON.parse(user);
+        const parsedUser = JSON.parse(user);
+        // Initialize file keys based on user ID
+        cvFileKey = `cv_${parsedUser.id}`;
+        lmFileKey = `lm_${parsedUser.id}`;
+        return parsedUser;
     }
     return null;
 }
@@ -23,14 +31,47 @@ async function loadUserProfile() {
     try {
         const response = await fetch(`${API_URL}/users/${currentUser.id}`);
         const data = await response.json();
+        console.log('API Response:', data);
 
         if (data.success) {
             const user = data.user;
+            // Restore files from localStorage if not in server response
+            if (!user.profile?.cvUrl || !user.profile?.coverLetterUrl) {
+                console.log('Files not in server response, checking localStorage...');
+                const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+                console.log('Saved files:', savedFiles);
+                console.log('cvFileKey:', cvFileKey);
+                if (savedFiles[cvFileKey] && !user.profile.cvUrl) {
+                    user.profile.cvUrl = savedFiles[cvFileKey].url;
+                    user.profile.cvName = savedFiles[cvFileKey].name;
+                    console.log('CV restored from localStorage');
+                }
+                if (savedFiles[lmFileKey] && !user.profile.coverLetterUrl) {
+                    user.profile.coverLetterUrl = savedFiles[lmFileKey].url;
+                    user.profile.lmName = savedFiles[lmFileKey].name;
+                    console.log('LM restored from localStorage');
+                }
+            }
             displayUserProfile(user);
+        } else {
+            console.log('API returned success: false, using session data');
+            // Fallback to session data
+            displayUserProfile(currentUser);
         }
     } catch (err) {
         console.error('Error loading profile:', err);
-        // Fallback to session data
+        // Fallback to session data and localStorage
+        const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+        if (savedFiles[cvFileKey]) {
+            currentUser.profile = currentUser.profile || {};
+            currentUser.profile.cvUrl = savedFiles[cvFileKey].url;
+            currentUser.profile.cvName = savedFiles[cvFileKey].name;
+        }
+        if (savedFiles[lmFileKey]) {
+            currentUser.profile = currentUser.profile || {};
+            currentUser.profile.coverLetterUrl = savedFiles[lmFileKey].url;
+            currentUser.profile.lmName = savedFiles[lmFileKey].name;
+        }
         displayUserProfile(currentUser);
     }
 }
@@ -38,51 +79,71 @@ async function loadUserProfile() {
 // Display user profile
 function displayUserProfile(user) {
     // Profile header
-    document.getElementById('userAvatar').textContent = `${user.firstName[0]}${user.lastName[0]}`;
-    document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
-    document.getElementById('userEmail').textContent = user.email;
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+
+    if (userAvatar) userAvatar.textContent = `${user.firstName[0]}${user.lastName[0]}`;
+    if (userName) userName.textContent = `${user.firstName} ${user.lastName}`;
+    if (userEmail) userEmail.textContent = user.email;
 
     // Personal info form
-    document.getElementById('firstNameInput').value = user.firstName || '';
-    document.getElementById('lastNameInput').value = user.lastName || '';
-    document.getElementById('emailInput').value = user.email || '';
-    document.getElementById('dateOfBirthInput').value = user.dateOfBirth || '';
+    const firstNameInput = document.getElementById('firstNameInput');
+    const lastNameInput = document.getElementById('lastNameInput');
+    const emailInput = document.getElementById('emailInput');
+    const dateOfBirthInput = document.getElementById('dateOfBirthInput');
+
+    if (firstNameInput) firstNameInput.value = user.firstName || '';
+    if (lastNameInput) lastNameInput.value = user.lastName || '';
+    if (emailInput) emailInput.value = user.email || '';
+    if (dateOfBirthInput) dateOfBirthInput.value = user.dateOfBirth || '';
 
     // User profile form
-    document.getElementById('schoolInput').value = user.profile?.school || '';
-    document.getElementById('studyLevelInput').value = user.profile?.studyLevel || 'bac+3';
-    document.getElementById('locationInput').value = user.profile?.location || '';
+    const schoolInput = document.getElementById('schoolInput');
+    const studyLevelInput = document.getElementById('studyLevelInput');
+    const locationInput = document.getElementById('locationInput');
+
+    if (schoolInput) schoolInput.value = user.profile?.school || '';
+    if (studyLevelInput) studyLevelInput.value = user.profile?.studyLevel || 'bac+3';
+    if (locationInput) locationInput.value = user.profile?.location || '';
 
     // Skills input (comma separated)
+    const skillsInput = document.getElementById('skillsInput');
     const skills = Array.isArray(user.profile?.skills) ? user.profile.skills.join(', ') : '';
-    document.getElementById('skillsInput').value = skills;
+    if (skillsInput) skillsInput.value = skills;
 
     // Languages
+    const languagesInput = document.getElementById('languagesInput');
     const languages = Array.isArray(user.profile?.languages) ? user.profile.languages.join(', ') : '';
-    document.getElementById('languagesInput').value = languages;
+    if (languagesInput) languagesInput.value = languages;
 
     // Preferred locations
+    const preferredLocationsInput = document.getElementById('preferredLocationsInput');
     const preferredLocations = Array.isArray(user.profile?.preferredLocations) ? user.profile.preferredLocations.join(', ') : '';
-    document.getElementById('preferredLocationsInput').value = preferredLocations;
+    if (preferredLocationsInput) preferredLocationsInput.value = preferredLocations;
 
     // Preferred domains
+    const preferredDomainsInput = document.getElementById('preferredDomainsInput');
     const preferredDomains = Array.isArray(user.profile?.preferredDomains) ? user.profile.preferredDomains.join(', ') : '';
-    document.getElementById('preferredDomainsInput').value = preferredDomains;
+    if (preferredDomainsInput) preferredDomainsInput.value = preferredDomains;
 
     // Preferred types
-    if (user.profile?.preferredTypes) {
+    const prefStage = document.getElementById('prefStage');
+    const prefAlternance = document.getElementById('prefAlternance');
+
+    if (prefStage && user.profile?.preferredTypes) {
         const types = user.profile.preferredTypes;
-        if (types.includes('stage')) document.getElementById('prefStage').checked = true;
-        if (types.includes('alternance')) document.getElementById('prefAlternance').checked = true;
+        if (types.includes('stage')) prefStage.checked = true;
+        if (types.includes('alternance')) prefAlternance.checked = true;
     }
 
     // CV and LM files
-    if (user.profile?.cvUrl) {
-        const cvFileNameEl = document.getElementById('cvFileName');
-        const cvFileStatusEl = document.getElementById('cvFileStatus');
-        const cvFileContainer = document.getElementById('cvFileContainer');
-        const cvPlaceholder = document.getElementById('cvPlaceholder');
+    const cvFileNameEl = document.getElementById('cvFileName');
+    const cvFileStatusEl = document.getElementById('cvFileStatus');
+    const cvFileContainer = document.getElementById('cvFileContainer');
+    const cvPlaceholder = document.getElementById('cvPlaceholder');
 
+    if (user.profile?.cvUrl) {
         if (cvFileNameEl) cvFileNameEl.textContent = user.profile.cvName || 'CV_uploadé.pdf';
         if (cvFileStatusEl) {
             cvFileStatusEl.classList.remove('text-gray-500');
@@ -93,12 +154,12 @@ function displayUserProfile(user) {
         if (cvPlaceholder) cvPlaceholder.classList.add('hidden');
     }
 
-    if (user.profile?.coverLetterUrl) {
-        const lmFileNameEl = document.getElementById('lmFileName');
-        const lmFileStatusEl = document.getElementById('lmFileStatus');
-        const lmFileContainer = document.getElementById('lmFileContainer');
-        const lmPlaceholder = document.getElementById('lmPlaceholder');
+    const lmFileNameEl = document.getElementById('lmFileName');
+    const lmFileStatusEl = document.getElementById('lmFileStatus');
+    const lmFileContainer = document.getElementById('lmFileContainer');
+    const lmPlaceholder = document.getElementById('lmPlaceholder');
 
+    if (user.profile?.coverLetterUrl) {
         if (lmFileNameEl) lmFileNameEl.textContent = user.profile.lmName || 'LM_uploadée.pdf';
         if (lmFileStatusEl) {
             lmFileStatusEl.classList.remove('text-gray-500');
@@ -160,19 +221,34 @@ async function saveProfile() {
     submitBtn.disabled = true;
 
     try {
+        // Get profile fields that exist in the form
+        const studyLevel = document.getElementById('studyLevelInput') ? document.getElementById('studyLevelInput').value : 'bac+3';
+        const location = document.getElementById('locationInput') ? document.getElementById('locationInput').value.trim() : '';
+        const skillsInput = document.getElementById('skillsInput');
+        const languagesInput = document.getElementById('languagesInput');
+        const preferredLocationsInput = document.getElementById('preferredLocationsInput');
+        const preferredDomainsInput = document.getElementById('preferredDomainsInput');
+        const prefStage = document.getElementById('prefStage');
+        const prefAlternance = document.getElementById('prefAlternance');
+
+        // Add school if field exists
+        const school = document.getElementById('schoolInput') ? document.getElementById('schoolInput').value.trim() : '';
+
         const profile = {
-            school: document.getElementById('schoolInput') ? document.getElementById('schoolInput').value.trim() : '',
-            studyLevel: document.getElementById('studyLevelInput').value,
-            location: document.getElementById('locationInput').value.trim(),
-            skills: document.getElementById('skillsInput').value.split(',').map(s => s.trim()).filter(s => s),
-            languages: document.getElementById('languagesInput').value.split(',').map(l => l.trim()).filter(l => l),
-            preferredLocations: document.getElementById('preferredLocationsInput').value.split(',').map(l => l.trim()).filter(l => l),
-            preferredDomains: document.getElementById('preferredDomainsInput').value.split(',').map(d => d.trim()).filter(d => d),
+            school: school,
+            studyLevel: studyLevel,
+            location: location,
+            skills: skillsInput ? skillsInput.value.split(',').map(s => s.trim()).filter(s => s) : [],
+            languages: languagesInput ? languagesInput.value.split(',').map(l => l.trim()).filter(l => l) : [],
+            preferredLocations: preferredLocationsInput ? preferredLocationsInput.value.split(',').map(l => l.trim()).filter(l => l) : [],
+            preferredDomains: preferredDomainsInput ? preferredDomainsInput.value.split(',').map(d => d.trim()).filter(d => d) : [],
             preferredTypes: []
         };
 
-        if (document.getElementById('prefStage') && document.getElementById('prefStage').checked) profile.preferredTypes.push('stage');
-        if (document.getElementById('prefAlternance') && document.getElementById('prefAlternance').checked) profile.preferredTypes.push('alternance');
+        if (prefStage && prefStage.checked) profile.preferredTypes.push('stage');
+        if (prefAlternance && prefAlternance.checked) profile.preferredTypes.push('alternance');
+
+        console.log('Saving profile:', profile);
 
         const response = await fetch(`${API_URL}/users/${currentUser.id}`, {
             method: 'PUT',
@@ -180,11 +256,33 @@ async function saveProfile() {
             body: JSON.stringify({ profile })
         });
 
+        console.log('Response status:', response.status);
+
         if (response.ok) {
             alert('Profil sauvegardé avec succès !');
             // Update current user
             currentUser.profile = profile;
             sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+            // Save files to localStorage for persistence
+            const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+            if (currentUser.profile.cvUrl) {
+                savedFiles[cvFileKey] = {
+                    url: currentUser.profile.cvUrl,
+                    name: currentUser.profile.cvName,
+                    type: 'cv',
+                    timestamp: new Date().toISOString()
+                };
+            }
+            if (currentUser.profile.coverLetterUrl) {
+                savedFiles[lmFileKey] = {
+                    url: currentUser.profile.coverLetterUrl,
+                    name: currentUser.profile.lmName,
+                    type: 'lm',
+                    timestamp: new Date().toISOString()
+                };
+            }
+            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
 
             // Update display
             document.getElementById('userStudyLevel').textContent = `Étudiant en ${profile.studyLevel || 'Bac+3'}`;
@@ -194,11 +292,13 @@ async function saveProfile() {
                 searchJobs();
             }
         } else {
-            alert('Erreur lors de la sauvegarde');
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Save failed:', errorData);
+            alert(`Erreur lors de la sauvegarde: ${errorData.error || response.statusText}`);
         }
     } catch (err) {
         console.error('Error saving profile:', err);
-        alert('Erreur lors de la sauvegarde');
+        alert(`Erreur lors de la sauvegarde: ${err.message}`);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -206,7 +306,7 @@ async function saveProfile() {
 }
 
 // Upload CV file
-function uploadCv(event) {
+async function uploadCv(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -218,11 +318,33 @@ function uploadCv(event) {
     if (currentUser) {
         // In a real app, this would upload to a server
         const reader = new FileReader();
-        reader.onload = function(e) {
-            // Store file as base64 in session
+        reader.onload = async function(e) {
+            // Store file as base64 in session storage (for immediate use)
             currentUser.profile = currentUser.profile || {};
             currentUser.profile.cvUrl = e.target.result;
             currentUser.profile.cvName = file.name;
+
+            // Save to local storage for persistence across refreshes
+            const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+            savedFiles[cvFileKey] = {
+                url: e.target.result,
+                name: file.name,
+                type: 'cv',
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
+
+            // Save to server
+            try {
+                await fetch(`${API_URL}/users/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profile: currentUser.profile })
+                });
+            } catch (err) {
+                console.warn('Could not save to server:', err);
+            }
+
             sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
             // Update UI
@@ -254,7 +376,7 @@ function uploadCv(event) {
 }
 
 // Upload LM file
-function uploadLm(event) {
+async function uploadLm(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -266,11 +388,33 @@ function uploadLm(event) {
     if (currentUser) {
         // In a real app, this would upload to a server
         const reader = new FileReader();
-        reader.onload = function(e) {
-            // Store file as base64 in session
+        reader.onload = async function(e) {
+            // Store file as base64 in session storage (for immediate use)
             currentUser.profile = currentUser.profile || {};
             currentUser.profile.coverLetterUrl = e.target.result;
             currentUser.profile.lmName = file.name;
+
+            // Save to local storage for persistence across refreshes
+            const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+            savedFiles[lmFileKey] = {
+                url: e.target.result,
+                name: file.name,
+                type: 'lm',
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
+
+            // Save to server
+            try {
+                await fetch(`${API_URL}/users/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profile: currentUser.profile })
+                });
+            } catch (err) {
+                console.warn('Could not save to server:', err);
+            }
+
             sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
             // Update UI

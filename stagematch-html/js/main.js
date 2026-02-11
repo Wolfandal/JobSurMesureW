@@ -848,6 +848,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load stats
     loadStats();
+
+    // Add input event listeners for autocomplete
+    const searchQueryInput = document.getElementById('searchQuery');
+    const locationInput = document.getElementById('location');
+
+    if (searchQueryInput) {
+        searchQueryInput.addEventListener('input', handleJobInputChange);
+    }
+
+    if (locationInput) {
+        locationInput.addEventListener('input', handleLocationInputChange);
+    }
 });
 
 function updateUploadContent() {
