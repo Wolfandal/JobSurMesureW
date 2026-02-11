@@ -144,14 +144,14 @@
                         Mon CV
                     </h3>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div id="cvFileContainer" class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200 hidden">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                     <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-green-800" id="cvFileName">Jean_Dupont_CV.pdf</p>
-                                    <p class="text-xs text-green-600" id="cvFileStatus">Uploadé le 25 janvier 2026</p>
+                                    <p class="font-medium text-green-800" id="cvFileName">Mon CV.pdf</p>
+                                    <p class="text-xs text-green-600" id="cvFileStatus">Uploadé le --/--/----</p>
                                 </div>
                             </div>
                             <div class="flex gap-2">
@@ -165,9 +165,10 @@
                         </div>
                         <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
                             <i data-lucide="upload" class="w-5 h-5 text-blue-500"></i>
-                            <span class="text-blue-600 font-medium">Ajouter un nouveau CV</span>
+                            <span class="text-blue-600 font-medium">Ajouter votre CV</span>
                             <input type="file" accept=".pdf,.doc,.docx" class="hidden" onchange="uploadCv(event)">
                         </label>
+                        <p id="cvPlaceholder" class="text-center text-gray-500 text-sm">Cliquez pour uploader votre CV</p>
                     </div>
                 </div>
 
@@ -178,14 +179,14 @@
                         Lettre de motivation
                     </h3>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div id="lmFileContainer" class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200 hidden">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                     <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-green-800" id="lmFileName">Jean_Dupont_LM.pdf</p>
-                                    <p class="text-xs text-green-600" id="lmFileStatus">Uploadée le 25 janvier 2026</p>
+                                    <p class="font-medium text-green-800" id="lmFileName">Ma LM.pdf</p>
+                                    <p class="text-xs text-green-600" id="lmFileStatus">Uploadée le --/--/----</p>
                                 </div>
                             </div>
                             <button class="p-2 text-red-500 hover:bg-red-100 rounded-lg">
@@ -194,9 +195,12 @@
                         </div>
                         <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-500 hover:bg-green-50 transition-colors">
                             <i data-lucide="upload" class="w-5 h-5 text-green-500"></i>
-                            <span class="text-green-600 font-medium">Ajouter une lettre de motivation</span>
+                            <span class="text-green-600 font-medium">Ajouter votre lettre de motivation</span>
                             <input type="file" accept=".pdf,.doc,.docx" class="hidden" onchange="uploadLm(event)">
                         </label>
+                        <p id="lmPlaceholder" class="text-center text-gray-500 text-sm">Cliquez pour uploader votre lettre de motivation</p>
+                    </div>
+                </div>
                     </div>
                 </div>
 

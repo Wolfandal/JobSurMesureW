@@ -78,17 +78,35 @@ function displayUserProfile(user) {
 
     // CV and LM files
     if (user.profile?.cvUrl) {
-        document.getElementById('cvFileName').textContent = user.profile.cvUrl.split('/').pop() || 'CV_uploadé.pdf';
-        document.getElementById('cvFileStatus').classList.remove('text-gray-500');
-        document.getElementById('cvFileStatus').classList.add('text-green-600');
-        document.getElementById('cvFileStatus').textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+        const cvFileNameEl = document.getElementById('cvFileName');
+        const cvFileStatusEl = document.getElementById('cvFileStatus');
+        const cvFileContainer = document.getElementById('cvFileContainer');
+        const cvPlaceholder = document.getElementById('cvPlaceholder');
+
+        if (cvFileNameEl) cvFileNameEl.textContent = user.profile.cvName || 'CV_uploadé.pdf';
+        if (cvFileStatusEl) {
+            cvFileStatusEl.classList.remove('text-gray-500');
+            cvFileStatusEl.classList.add('text-green-600');
+            cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+        }
+        if (cvFileContainer) cvFileContainer.classList.remove('hidden');
+        if (cvPlaceholder) cvPlaceholder.classList.add('hidden');
     }
 
     if (user.profile?.coverLetterUrl) {
-        document.getElementById('lmFileName').textContent = user.profile.coverLetterUrl.split('/').pop() || 'LM_uploadée.pdf';
-        document.getElementById('lmFileStatus').classList.remove('text-gray-500');
-        document.getElementById('lmFileStatus').classList.add('text-green-600');
-        document.getElementById('lmFileStatus').textContent = 'Uploadée le ' + new Date().toLocaleDateString('fr-FR');
+        const lmFileNameEl = document.getElementById('lmFileName');
+        const lmFileStatusEl = document.getElementById('lmFileStatus');
+        const lmFileContainer = document.getElementById('lmFileContainer');
+        const lmPlaceholder = document.getElementById('lmPlaceholder');
+
+        if (lmFileNameEl) lmFileNameEl.textContent = user.profile.lmName || 'LM_uploadée.pdf';
+        if (lmFileStatusEl) {
+            lmFileStatusEl.classList.remove('text-gray-500');
+            lmFileStatusEl.classList.add('text-green-600');
+            lmFileStatusEl.textContent = 'Uploadée le ' + new Date().toLocaleDateString('fr-FR');
+        }
+        if (lmFileContainer) lmFileContainer.classList.remove('hidden');
+        if (lmPlaceholder) lmPlaceholder.classList.add('hidden');
     }
 
     setTimeout(() => lucide.createIcons(), 10);
