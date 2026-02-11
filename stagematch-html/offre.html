@@ -157,7 +157,7 @@
                 </div>
 
                 <!-- Matching Analysis -->
-                <div class="bg-white rounded-xl p-6 shadow-sm">
+                <div id="matchingAnalysis" class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <i data-lucide="brain" class="w-5 h-5 text-blue-600"></i>
                         Analyse de matching
@@ -166,25 +166,22 @@
                         <div>
                             <div class="flex justify-between mb-1">
                                 <span class="text-sm font-medium text-gray-700">Score de matching</span>
-                                <span class="text-sm font-medium text-green-600">92%</span>
+                                <span id="matchScoreText" class="text-sm font-medium text-green-600">--%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                                <div id="matchScoreBar" class="h-2 rounded-full"></div>
                             </div>
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-700 mb-2">Compétences matching</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm">JavaScript</span>
-                                <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm">React</span>
-                                <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm">Node.js</span>
+                            <div id="matchedSkills" class="flex flex-wrap gap-2 matched-skills">
+                                <span class="text-gray-500 text-sm">Analyse en cours...</span>
                             </div>
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-700 mb-2">Compétences à developper</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm">PostgreSQL</span>
-                                <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm">Git</span>
+                            <div id="missingSkills" class="flex flex-wrap gap-2 missing-skills">
+                                <span class="text-gray-500 text-sm">Analyse en cours...</span>
                             </div>
                         </div>
                     </div>

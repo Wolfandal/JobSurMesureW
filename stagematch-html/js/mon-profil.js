@@ -150,6 +150,11 @@ async function saveProfile() {
             // Update current user
             currentUser.profile = profile;
             sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+            // Reload jobs with new match scores if on search page
+            if (typeof searchJobs === 'function') {
+                searchJobs();
+            }
         } else {
             alert('Erreur lors de la sauvegarde');
         }

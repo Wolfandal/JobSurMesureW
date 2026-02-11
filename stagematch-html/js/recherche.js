@@ -2,6 +2,15 @@
 
 const API_URL = 'http://localhost:3000/api';
 
+// Get current user from session
+function getCurrentUser() {
+    const user = sessionStorage.getItem('jobsurmesure_user');
+    if (user) {
+        return JSON.parse(user);
+    }
+    return null;
+}
+
 // Popular Jobs Dataset (120+ jobs)
 const popularJobs = [
     // Tech & IT
@@ -354,6 +363,12 @@ async function fetchJobs(filters = {}) {
     if (filters.domain) params.append('domain', filters.domain);
     if (filters.remote !== undefined) params.append('remote', filters.remote);
 
+    // Add user ID for matching score calculation
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+        params.append('userId', currentUser.id);
+    }
+
     try {
         const response = await fetch(`${API_URL}/jobs?${params.toString()}`);
         const data = await response.json();
@@ -424,7 +439,9 @@ async function loadStats() {
 
 async function displayPopularJobs() {
     const jobs = await fetchJobs();
-    displayJobs(jobs.slice(0, 6));
+    // Display top 6 jobs sorted by match score
+    const sortedJobs = jobs.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0)).slice(0, 6);
+    displayJobs(sortedJobs);
 }
 
 document.addEventListener('DOMContentLoaded', async function() {

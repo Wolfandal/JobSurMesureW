@@ -1,6 +1,65 @@
 // Offre Page JavaScript
 
 const API_URL = 'http://localhost:3000/api';
+let currentJob = null;
+
+// Matching Engine client-side functions
+function analyzeMatching(job, user) {
+    if (!job || !user) return { score: 0, matchedSkills: [], missingSkills: [] };
+
+    const matchedSkills = [];
+    const missingSkills = [];
+
+    // Get user skills
+    const userSkills = Array.isArray(user.profile?.skills) ? user.profile.skills.map(s => s.toLowerCase()) : [];
+
+    // Get job required skills
+    const jobSkills = Array.isArray(job.skills) ? job.skills.map(s => s.toLowerCase()) : [];
+
+    // Also extract skills from job description
+    const jobDescSkills = [];
+    if (job.description) {
+        const descLower = job.description.toLowerCase();
+        const commonSkills = ['javascript', 'python', 'java', 'c#', 'php', 'typescript', 'react', 'angular', 'vue', 'html', 'css', 'sql', 'mysql', 'postgres', 'docker', 'kubernetes', 'aws', 'azure', 'git', 'api', 'linux'];
+        commonSkills.forEach(skill => {
+            if (descLower.includes(skill)) jobDescSkills.push(skill);
+        });
+    }
+
+    // Combine job skills
+    const allJobSkills = [...new Set([...jobSkills, ...jobDescSkills])];
+
+    // Check matches
+    allJobSkills.forEach(skill => {
+        const hasSkill = userSkills.some(usrSkill => usrSkill.includes(skill) || skill.includes(usrSkill));
+        if (hasSkill) {
+            matchedSkills.push(skill);
+        } else {
+            missingSkills.push(skill);
+        }
+    });
+
+    // Calculate score
+    let score = 0;
+    if (allJobSkills.length > 0) {
+        score = Math.round((matchedSkills.length / allJobSkills.length) * 100);
+    }
+
+    // Location bonus
+    if (user.profile?.location && job.location) {
+        if (user.profile.location.toLowerCase() === job.location.toLowerCase()) {
+            score = Math.min(score + 20, 100);
+        }
+    }
+
+    // Type bonus
+    const preferredTypes = user.profile?.preferredTypes || ['stage', 'alternance'];
+    if (preferredTypes.includes(job.type)) {
+        score = Math.min(score + 15, 100);
+    }
+
+    return { score, matchedSkills, missingSkills, allJobSkills };
+}
 
 // Get job ID from URL
 function getJobId() {
@@ -206,6 +265,15 @@ function closeAIGenerationModal() {
 // Display job with all sections including roadmap and AI
 function displayJob(job) {
     currentJob = job;
+
+    // Get current user for matching analysis
+    const user = getCurrentUser();
+
+    // Analyze matching if user is logged in
+    if (user) {
+        const matchAnalysis = analyzeMatching(job, user);
+        displayMatchingAnalysis(matchAnalysis);
+    }
 
     // Update basic info
     document.getElementById('jobTitleDisplay').textContent = job.title;
@@ -419,6 +487,67 @@ function checkAuth() {
             profileLink.innerHTML = '<i data-lucide="user" class="w-4 h-4"></i> Mon profil';
             profileLink.href = 'mon-profil.html';
         }
+    }
+}
+
+// Display matching analysis
+function displayMatchingAnalysis(matchAnalysis) {
+    const analysisContainer = document.getElementById('matchingAnalysis');
+    if (!analysisContainer) return;
+
+    const { score, matchedSkills, missingSkills, allJobSkills } = matchAnalysis;
+
+    // Update score badge in main section
+    const scoreBadge = document.getElementById('jobScoreBadge');
+    if (scoreBadge) {
+        scoreBadge.textContent = `${score}% match`;
+        if (score >= 80) {
+            scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-green-100 text-green-800 border-green-300';
+        } else if (score >= 60) {
+            scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-blue-100 text-blue-800 border-blue-300';
+        } else {
+            scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-yellow-100 text-yellow-800 border-yellow-300';
+        }
+    }
+
+    // Update analysis section
+    const scoreBar = analysisContainer.querySelector('.w-full.bg-gray-200.rounded-full.h-2 div');
+    if (scoreBar) {
+        scoreBar.style.width = `${score}%`;
+        if (score >= 80) {
+            scoreBar.className = 'bg-green-500 h-2 rounded-full';
+        } else if (score >= 60) {
+            scoreBar.className = 'bg-blue-500 h-2 rounded-full';
+        } else {
+            scoreBar.className = 'bg-yellow-500 h-2 rounded-full';
+        }
+    }
+
+    const scoreText = analysisContainer.querySelector('.text-green-600');
+    if (scoreText) {
+        scoreText.textContent = `${score}%`;
+    }
+
+    // Matched skills
+    const matchedSkillsDiv = analysisContainer.querySelector('.matched-skills');
+    if (matchedSkillsDiv) {
+        matchedSkillsDiv.innerHTML = matchedSkills.length > 0 ? matchedSkills.map(skill => `
+            <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
+        `).join('') : '<span class="text-gray-500 text-sm">Aucune compétence matchée</span>';
+    }
+
+    // Missing skills
+    const missingSkillsDiv = analysisContainer.querySelector('.missing-skills');
+    if (missingSkillsDiv) {
+        missingSkillsDiv.innerHTML = missingSkills.length > 0 ? missingSkills.map(skill => `
+            <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
+        `).join('') : '<span class="text-gray-500 text-sm">Toutes les compétences sont présentes !</span>';
+    }
+
+    // Match percentage text
+    const matchPercent = analysisContainer.querySelector('.text-green-600.font-semibold');
+    if (matchPercent) {
+        matchPercent.textContent = `${score}%`;
     }
 }
 

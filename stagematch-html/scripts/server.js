@@ -8,6 +8,7 @@
 const express = require('express');
 const cors = require('cors');
 const DatabaseManager = require('./database');
+const MatchingEngine = require('./matching');
 const crypto = require('crypto');
 
 const app = express();
@@ -19,6 +20,9 @@ app.use(express.json());
 
 // Database instance
 let dbManager = null;
+
+// Matching engine instance
+let matchingEngine = null;
 
 // Generate unique ID
 function generateId(prefix) {
@@ -33,6 +37,9 @@ app.listen(PORT, async () => {
     dbManager = new DatabaseManager();
     await dbManager.connect();
     await dbManager.initializeSchema();
+
+    // Initialize matching engine
+    matchingEngine = new MatchingEngine();
 
     console.log('Database connected');
 });
@@ -155,7 +162,14 @@ app.put('/api/users/:id', async (req, res) => {
 
         await dbManager.insertUser(updatedUser);
 
-        res.json({ success: true, user: updatedUser });
+        // If matching engine available, update all job match scores
+        let updatedJobs = [];
+        if (matchingEngine) {
+            const allJobs = await dbManager.getJobs({});
+            updatedJobs = await matchingEngine.updateJobMatchScores(allJobs, updatedUser.profile || {});
+        }
+
+        res.json({ success: true, user: updatedUser, jobs: updatedJobs });
     } catch (err) {
         console.error('Error updating user:', err);
         res.status(500).json({ success: false, error: err.message });
@@ -205,7 +219,7 @@ app.get('/api/applications/:userId', async (req, res) => {
 
 // ========== JOB ROUTES ==========
 
-// GET /api/jobs - Search jobs
+// GET /api/jobs - Search jobs with optional matching score
 app.get('/api/jobs', async (req, res) => {
     try {
         const {
@@ -214,7 +228,8 @@ app.get('/api/jobs', async (req, res) => {
             type = 'all',
             studyLevel,
             domain,
-            remote
+            remote,
+            userId
         } = req.query;
 
         const filters = {
@@ -227,9 +242,47 @@ app.get('/api/jobs', async (req, res) => {
         };
 
         const jobs = await dbManager.getJobs(filters);
+
+        // If userId provided, calculate match scores
+        if (userId && matchingEngine) {
+            const user = await dbManager.getUserById(userId);
+            if (user) {
+                const jobsWithScores = await matchingEngine.updateJobMatchScores(jobs, user.profile || {});
+                res.json({ success: true, jobs: jobsWithScores });
+                return;
+            }
+        }
+
         res.json({ success: true, jobs });
     } catch (err) {
         console.error('Error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// GET /api/jobs/match/:userId - Get all jobs with match scores for a user
+app.get('/api/jobs/match/:userId', async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Get user profile
+        const user = await dbManager.getUserById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+
+        // Get all jobs
+        const jobs = await dbManager.getJobs({});
+
+        // Calculate match scores
+        const jobsWithScores = await matchingEngine.updateJobMatchScores(jobs, user.profile || {});
+
+        // Sort by match score descending
+        jobsWithScores.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+        res.json({ success: true, jobs: jobsWithScores });
+    } catch (err) {
+        console.error('Error calculating match scores:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
