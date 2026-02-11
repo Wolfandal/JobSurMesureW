@@ -120,13 +120,18 @@ async function saveProfile() {
     }
 
     const submitBtn = document.getElementById('saveProfileBtn');
+    if (!submitBtn) {
+        alert('Erreur: bouton de sauvegarde non trouvé');
+        return;
+    }
+
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Sauvegarde...';
     submitBtn.disabled = true;
 
     try {
         const profile = {
-            school: document.getElementById('schoolInput').value.trim(),
+            school: document.getElementById('schoolInput') ? document.getElementById('schoolInput').value.trim() : '',
             studyLevel: document.getElementById('studyLevelInput').value,
             location: document.getElementById('locationInput').value.trim(),
             skills: document.getElementById('skillsInput').value.split(',').map(s => s.trim()).filter(s => s),
@@ -136,8 +141,8 @@ async function saveProfile() {
             preferredTypes: []
         };
 
-        if (document.getElementById('prefStage').checked) profile.preferredTypes.push('stage');
-        if (document.getElementById('prefAlternance').checked) profile.preferredTypes.push('alternance');
+        if (document.getElementById('prefStage') && document.getElementById('prefStage').checked) profile.preferredTypes.push('stage');
+        if (document.getElementById('prefAlternance') && document.getElementById('prefAlternance').checked) profile.preferredTypes.push('alternance');
 
         const response = await fetch(`${API_URL}/users/${currentUser.id}`, {
             method: 'PUT',
@@ -150,6 +155,9 @@ async function saveProfile() {
             // Update current user
             currentUser.profile = profile;
             sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+            // Update display
+            document.getElementById('userStudyLevel').textContent = `Étudiant en ${profile.studyLevel || 'Bac+3'}`;
 
             // Reload jobs with new match scores if on search page
             if (typeof searchJobs === 'function') {
@@ -170,50 +178,80 @@ async function saveProfile() {
 // Upload CV file
 function uploadCv(event) {
     const file = event.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    // Load current user if not available
+    if (!currentUser) {
+        currentUser = getCurrentUser();
+    }
+
+    if (currentUser) {
         // In a real app, this would upload to a server
         const reader = new FileReader();
         reader.onload = function(e) {
             // Store file as base64 in session
-            if (currentUser) {
-                currentUser.profile = currentUser.profile || {};
-                currentUser.profile.cvUrl = e.target.result;
-                currentUser.profile.cvName = file.name;
-                sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+            currentUser.profile = currentUser.profile || {};
+            currentUser.profile.cvUrl = e.target.result;
+            currentUser.profile.cvName = file.name;
+            sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
-                // Update UI
-                document.getElementById('cvFileName').textContent = file.name;
-                document.getElementById('cvFileStatus').classList.remove('text-gray-500', 'text-red-500');
-                document.getElementById('cvFileStatus').classList.add('text-green-600');
-                document.getElementById('cvFileStatus').textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+            // Update UI
+            const cvFileNameEl = document.getElementById('cvFileName');
+            const cvFileStatusEl = document.getElementById('cvFileStatus');
+
+            if (cvFileNameEl) {
+                cvFileNameEl.textContent = file.name;
+            }
+            if (cvFileStatusEl) {
+                cvFileStatusEl.classList.remove('text-gray-500', 'text-red-500');
+                cvFileStatusEl.classList.add('text-green-600');
+                cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
             }
         };
         reader.readAsDataURL(file);
+    } else {
+        alert('Veuillez vous connecter pour uploader votre CV');
+        window.location.href = 'connexion.html';
     }
 }
 
 // Upload LM file
 function uploadLm(event) {
     const file = event.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    // Load current user if not available
+    if (!currentUser) {
+        currentUser = getCurrentUser();
+    }
+
+    if (currentUser) {
         // In a real app, this would upload to a server
         const reader = new FileReader();
         reader.onload = function(e) {
             // Store file as base64 in session
-            if (currentUser) {
-                currentUser.profile = currentUser.profile || {};
-                currentUser.profile.coverLetterUrl = e.target.result;
-                currentUser.profile.lmName = file.name;
-                sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+            currentUser.profile = currentUser.profile || {};
+            currentUser.profile.coverLetterUrl = e.target.result;
+            currentUser.profile.lmName = file.name;
+            sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
-                // Update UI
-                document.getElementById('lmFileName').textContent = file.name;
-                document.getElementById('lmFileStatus').classList.remove('text-gray-500', 'text-red-500');
-                document.getElementById('lmFileStatus').classList.add('text-green-600');
-                document.getElementById('lmFileStatus').textContent = 'Uploadée le ' + new Date().toLocaleDateString('fr-FR');
+            // Update UI
+            const lmFileNameEl = document.getElementById('lmFileName');
+            const lmFileStatusEl = document.getElementById('lmFileStatus');
+
+            if (lmFileNameEl) {
+                lmFileNameEl.textContent = file.name;
+            }
+            if (lmFileStatusEl) {
+                lmFileStatusEl.classList.remove('text-gray-500', 'text-red-500');
+                lmFileStatusEl.classList.add('text-green-600');
+                lmFileStatusEl.textContent = 'Uploadée le ' + new Date().toLocaleDateString('fr-FR');
             }
         };
         reader.readAsDataURL(file);
+    } else {
+        alert('Veuillez vous connecter pour uploader votre lettre de motivation');
+        window.location.href = 'connexion.html';
     }
 }
 
