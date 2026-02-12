@@ -192,16 +192,18 @@ async function readFileContent(file) {
     });
 }
 
-// Get current user from session
+// Get current user from local storage (persists across page refreshes)
 function getCurrentUser() {
-    const user = sessionStorage.getItem('jobsurmesure_user');
+    const user = localStorage.getItem('jobsurmesure_user');
     if (user) {
         const parsedUser = JSON.parse(user);
         // Initialize file keys based on user ID
         cvFileKey = `cv_${parsedUser.id}`;
         lmFileKey = `lm_${parsedUser.id}`;
+        console.log('getCurrentUser: Found user', parsedUser.email, 'cvFileKey:', cvFileKey);
         return parsedUser;
     }
+    console.log('getCurrentUser: No user found in localStorage');
     return null;
 }
 
@@ -247,16 +249,20 @@ async function loadUserProfile() {
         console.error('Error loading profile:', err);
         // Fallback to session data and localStorage
         const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+        console.log('Saved files from localStorage:', savedFiles);
         if (savedFiles[cvFileKey]) {
             currentUser.profile = currentUser.profile || {};
             currentUser.profile.cvUrl = savedFiles[cvFileKey].url;
             currentUser.profile.cvName = savedFiles[cvFileKey].name;
+            console.log('CV restored from localStorage:', currentUser.profile.cvName);
         }
         if (savedFiles[lmFileKey]) {
             currentUser.profile = currentUser.profile || {};
             currentUser.profile.coverLetterUrl = savedFiles[lmFileKey].url;
             currentUser.profile.lmName = savedFiles[lmFileKey].name;
+            console.log('LM restored from localStorage:', currentUser.profile.lmName);
         }
+        // Ensure displayUserProfile is called with the updated currentUser
         displayUserProfile(currentUser);
     }
 }
@@ -445,9 +451,9 @@ async function saveProfile() {
 
         if (response.ok) {
             alert('Profil sauvegardé avec succès !');
-            // Update current user
+            // Update current user and save to localStorage (persists across refreshes)
             currentUser.profile = profile;
-            sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+            localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
             // Save files to localStorage for persistence
             const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
@@ -559,7 +565,7 @@ async function uploadCv(event) {
                 console.warn('Could not save to server:', err);
             }
 
-            sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+            localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
             // Update UI
             const cvFileNameEl = document.getElementById('cvFileName');
@@ -624,7 +630,7 @@ async function uploadCv(event) {
                     console.warn('Could not save to server:', err);
                 }
 
-                sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+                localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
                 const cvFileNameEl = document.getElementById('cvFileName');
                 const cvFileStatusEl = document.getElementById('cvFileStatus');
@@ -686,7 +692,7 @@ async function uploadLm(event) {
                 console.warn('Could not save to server:', err);
             }
 
-            sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+            localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
             // Update UI
             const lmFileNameEl = document.getElementById('lmFileName');
@@ -719,7 +725,8 @@ async function uploadLm(event) {
 // Logout function
 function logout() {
     if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-        sessionStorage.removeItem('jobsurmesure_user');
+        localStorage.removeItem('jobsurmesure_user');
+        localStorage.removeItem('jobsurmesure_files');
         window.location.href = 'index.html';
     }
 }

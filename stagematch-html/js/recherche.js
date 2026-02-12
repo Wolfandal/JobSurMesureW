@@ -2,9 +2,9 @@
 
 const API_URL = 'http://localhost:3000/api';
 
-// Get current user from session
+// Get current user from localStorage (persists across page refreshes)
 function getCurrentUser() {
-    const user = sessionStorage.getItem('jobsurmesure_user');
+    const user = localStorage.getItem('jobsurmesure_user');
     if (user) {
         return JSON.parse(user);
     }

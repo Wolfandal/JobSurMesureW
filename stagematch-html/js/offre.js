@@ -78,9 +78,9 @@ function getJobId() {
     return params.get('id');
 }
 
-// Get current user from session
+// Get current user from localStorage (persists across page refreshes)
 function getCurrentUser() {
-    const user = sessionStorage.getItem('jobsurmesure_user');
+    const user = localStorage.getItem('jobsurmesure_user');
     if (user) {
         return JSON.parse(user);
     }
@@ -697,7 +697,8 @@ function displayMatchingAnalysis(matchAnalysis) {
 // Logout function
 function logout() {
     if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-        sessionStorage.removeItem('jobsurmesure_user');
+        localStorage.removeItem('jobsurmesure_user');
+        localStorage.removeItem('jobsurmesure_files');
         window.location.href = 'index.html';
     }
 }

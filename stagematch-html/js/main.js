@@ -439,26 +439,26 @@ Vos missions :
 // Auth State
 let currentUser = null;
 
-// Load user from sessionStorage
+// Load user from localStorage (persists across page refreshes)
 function loadUser() {
-    const savedUser = sessionStorage.getItem('jobsurmesure_user');
+    const savedUser = localStorage.getItem('jobsurmesure_user');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         console.log('User loaded:', currentUser.email);
     } else {
-        console.log('No user found in session storage');
+        console.log('No user found in localStorage');
     }
     updateAuthUI();
 }
 
-// Store user in sessionStorage
+// Store user in localStorage (persists across page refreshes)
 function storeUser(user) {
-    sessionStorage.setItem('jobsurmesure_user', JSON.stringify(user));
+    localStorage.setItem('jobsurmesure_user', JSON.stringify(user));
 }
 
 // Remove user
 function removeUser() {
-    sessionStorage.removeItem('jobsurmesure_user');
+    localStorage.removeItem('jobsurmesure_user');
     currentUser = null;
     updateAuthUI();
 }
