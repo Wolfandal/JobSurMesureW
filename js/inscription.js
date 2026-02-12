@@ -144,6 +144,7 @@ function handleRegistration(e) {
             email: formData.email,
             firstName: formData.firstName,
             lastName: formData.lastName,
+            displayName: formData.firstName + ' ' + formData.lastName,
             dateOfBirth: formData.dateOfBirth,
             createdAt: new Date()
         };

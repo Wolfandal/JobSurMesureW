@@ -197,6 +197,10 @@ function getCurrentUser() {
     const user = localStorage.getItem('jobsurmesure_user');
     if (user) {
         const parsedUser = JSON.parse(user);
+        // Add displayName if not present (for backward compatibility)
+        if (!parsedUser.displayName) {
+            parsedUser.displayName = (parsedUser.firstName || '') + ' ' + (parsedUser.lastName || '');
+        }
         // Initialize file keys based on user ID
         cvFileKey = `cv_${parsedUser.id}`;
         lmFileKey = `lm_${parsedUser.id}`;

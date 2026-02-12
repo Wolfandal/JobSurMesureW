@@ -53,11 +53,17 @@ function handleLogin(e) {
     // For demo, we just simulate success
     setTimeout(() => {
         // Create a mock user object
+        const username = email.split('@')[0];
+        const nameParts = username.split('.');
+        const firstName = nameParts.length > 0 ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1) : 'Utilisateur';
+        const lastName = nameParts.length > 1 ? nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1) : 'Utilisateur';
+
         const user = {
             id: 'user-' + Date.now(),
             email: email,
-            firstName: email.split('@')[0],
-            lastName: 'Utilisateur',
+            firstName: firstName,
+            lastName: lastName,
+            displayName: firstName + ' ' + lastName,
             dateOfBirth: '1995-01-01',
             createdAt: new Date(),
             profile: {

@@ -445,12 +445,20 @@ function loadUser() {
     const savedUser = localStorage.getItem('jobsurmesure_user');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
+        // Add displayName if not present (for backward compatibility)
+        if (!currentUser.displayName) {
+            currentUser.displayName = (currentUser.firstName || '') + ' ' + (currentUser.lastName || '');
+        }
         updateAuthUI();
     }
 }
 
 // Store user in localStorage
 function storeUser(user) {
+    // Add displayName if not present
+    if (user && !user.displayName) {
+        user.displayName = (user.firstName || '') + ' ' + (user.lastName || '');
+    }
     localStorage.setItem('jobsurmesure_user', JSON.stringify(user));
 }
 
@@ -470,7 +478,7 @@ function updateAuthUI() {
         if (authLinks) authLinks.style.display = 'none';
         if (userLinks) {
             userLinks.style.display = 'flex';
-            document.getElementById('userDisplayName').textContent = currentUser.firstName || 'Bonjour';
+            document.getElementById('userDisplayName').textContent = currentUser.displayName || (currentUser.firstName + ' ' + currentUser.lastName) || 'Bonjour';
         }
     } else {
         if (authLinks) authLinks.style.display = 'flex';
