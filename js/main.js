@@ -503,26 +503,21 @@ let carouselInterval = null;
 let isAnimating = false;
 
 function updateCarousel() {
-    const slides = document.querySelectorAll('#carouselSlides > div');
+    const slides = document.querySelectorAll('#carouselContainer > div');
+
+    // Reset all slides to visible state
     slides.forEach((slide, index) => {
         slide.style.transition = 'transform 0.7s ease-in-out, opacity 0.7s ease-in-out';
-        slide.style.zIndex = '0';
-
-        if (index === currentSlide) {
-            // Active slide - in view
-            slide.style.opacity = '1';
-            slide.style.transform = 'translateX(0)';
-            slide.style.zIndex = '10';
-        } else if (index < currentSlide) {
-            // Previous slides - hidden to the left
-            slide.style.opacity = '0';
-            slide.style.transform = 'translateX(-100vw)';
-        } else {
-            // Next slides - hidden to the right
-            slide.style.opacity = '0';
-            slide.style.transform = 'translateX(100vw)';
-        }
+        slide.style.transform = 'translateX(0)';
+        slide.style.opacity = '1';
+        slide.classList.remove('hidden');
+        slide.style.display = 'none'; // Hide by default
     });
+
+    // Show only the active slide
+    const currentSlideEl = slides[currentSlide];
+    currentSlideEl.style.display = 'flex';
+    currentSlideEl.classList.remove('hidden');
 
     // Update dot indicators
     updateDots();
@@ -550,27 +545,28 @@ function nextSlide() {
     if (isAnimating) return;
     isAnimating = true;
 
+    // Remove auto-play - wait for user interaction
     if (carouselInterval) {
         clearInterval(carouselInterval);
         carouselInterval = null;
     }
 
-    const slides = document.querySelectorAll('#carouselSlides > div');
+    const slides = document.querySelectorAll('#carouselContainer > div');
     const nextIndex = (currentSlide + 1) % slideCount;
 
-    // Move current slide left (out)
-    slides[currentSlide].style.transform = 'translateX(-100vw)';
+    // Animate current slide out (slide to left)
+    slides[currentSlide].style.transform = 'translateX(-100%)';
     slides[currentSlide].style.opacity = '0';
 
-    // Prepare next slide from right
-    slides[nextIndex].style.transform = 'translateX(100vw)';
+    // Animate next slide in (slide from right)
+    slides[nextIndex].style.transform = 'translateX(100%)';
     slides[nextIndex].style.opacity = '0';
 
     setTimeout(() => {
         currentSlide = nextIndex;
         updateCarousel();
         isAnimating = false;
-        carouselInterval = setInterval(nextSlide, 5000);
+        // No auto-play - user must click button
     }, 700);
 }
 
@@ -578,27 +574,28 @@ function prevSlide() {
     if (isAnimating) return;
     isAnimating = true;
 
+    // Remove auto-play - wait for user interaction
     if (carouselInterval) {
         clearInterval(carouselInterval);
         carouselInterval = null;
     }
 
-    const slides = document.querySelectorAll('#carouselSlides > div');
+    const slides = document.querySelectorAll('#carouselContainer > div');
     const prevIndex = (currentSlide - 1 + slideCount) % slideCount;
 
-    // Move current slide left (out)
-    slides[currentSlide].style.transform = 'translateX(-100vw)';
+    // Animate current slide out (slide to left)
+    slides[currentSlide].style.transform = 'translateX(-100%)';
     slides[currentSlide].style.opacity = '0';
 
-    // Prepare previous slide from left
-    slides[prevIndex].style.transform = 'translateX(-100vw)';
+    // Animate prev slide in (slide from left)
+    slides[prevIndex].style.transform = 'translateX(-100%)';
     slides[prevIndex].style.opacity = '0';
 
     setTimeout(() => {
         currentSlide = prevIndex;
         updateCarousel();
         isAnimating = false;
-        carouselInterval = setInterval(nextSlide, 5000);
+        // No auto-play - user must click button
     }, 700);
 }
 
@@ -606,33 +603,34 @@ function goToSlide(index) {
     if (isAnimating) return;
     isAnimating = true;
 
+    // Remove auto-play - wait for user interaction
     if (carouselInterval) {
         clearInterval(carouselInterval);
         carouselInterval = null;
     }
 
-    const slides = document.querySelectorAll('#carouselSlides > div');
+    const slides = document.querySelectorAll('#carouselContainer > div');
 
-    // Determine direction to prepare the target slide correctly
+    // Animate current slide out (slide to left)
+    slides[currentSlide].style.transform = 'translateX(-100%)';
+    slides[currentSlide].style.opacity = '0';
+
+    // Prepare target slide
     if (index > currentSlide || (currentSlide === slideCount - 1 && index === 0)) {
         // Moving forward - prepare target from right
-        slides[index].style.transform = 'translateX(100vw)';
+        slides[index].style.transform = 'translateX(100%)';
         slides[index].style.opacity = '0';
     } else if (index < currentSlide || (currentSlide === 0 && index === slideCount - 1)) {
         // Moving backward - prepare target from left
-        slides[index].style.transform = 'translateX(-100vw)';
+        slides[index].style.transform = 'translateX(-100%)';
         slides[index].style.opacity = '0';
     }
-
-    slides[currentSlide].style.transform = 'translateX(-100vw)';
-    slides[currentSlide].style.opacity = '0';
 
     setTimeout(() => {
         currentSlide = index;
         updateCarousel();
         isAnimating = false;
-        // Restart auto-play
-        carouselInterval = setInterval(nextSlide, 5000);
+        // No auto-play - user must click button
     }, 700);
 }
 
@@ -955,8 +953,7 @@ function initMobileMenu() {
 
     // Initialize carousel
     updateCarousel();
-    // Start automatic carousel rotation
-    carouselInterval = setInterval(nextSlide, 5000);
+    // Carousel is now manual - user must click buttons to navigate
 
     // Initialize icons
     lucide.createIcons();
