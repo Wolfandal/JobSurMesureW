@@ -517,10 +517,8 @@ function updateCarousel() {
     // Update dot indicators
     updateDots();
 
-    // Re-initialize Lucide icons after carousel transition
-    setTimeout(() => {
-        lucide.createIcons();
-    }, 0);
+    // Re-initialize Lucide icons
+    lucide.createIcons();
 }
 
 function updateDots() {
