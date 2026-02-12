@@ -109,9 +109,57 @@ function formatDate(date) {
     return dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+// Estimate salary based on job type and domain
+function estimateSalaryFromJob(job) {
+    const domain = (job.domain || '').toLowerCase();
+    const title = (job.title || '').toLowerCase();
+    const type = (job.type || 'stage').toLowerCase();
+
+    // Default estimates based on common knowledge
+    if (type === 'alternance') {
+        return '22k - 35k €/an'; // Alternance typically 1800-2800€/mois
+    }
+
+    // Stage estimates by domain
+    const estimates = {
+        'tech': '24k - 36k €/an',
+        'it': '24k - 36k €/an',
+        'data': '24k - 36k €/an',
+        'marketing': '22k - 32k €/an',
+        'finance': '25k - 38k €/an',
+        'consulting': '25k - 40k €/an',
+        'design': '22k - 34k €/an',
+        'human': '22k - 32k €/an',
+        'ressources': '22k - 32k €/an',
+        'engineering': '24k - 36k €/an',
+        'health': '24k - 38k €/an',
+        'education': '20k - 30k €/an'
+    };
+
+    // Check domain first
+    for (const [key, value] of Object.entries(estimates)) {
+        if (domain.includes(key)) {
+            return value;
+        }
+    }
+
+    // Check title keywords as fallback
+    for (const [key, value] of Object.entries(estimates)) {
+        if (title.includes(key)) {
+            return value;
+        }
+    }
+
+    // Generic stage estimate
+    return '20k - 32k €/an';
+}
+
 // Calculate salary range
-function calculateAnnualSalary(monthlySalary) {
-    if (!monthlySalary) return 'Non communiqué';
+function calculateAnnualSalary(monthlySalary, job) {
+    if (!monthlySalary || monthlySalary === 'Non communiqué' || monthlySalary === '') {
+        // If no salary provided, estimate from job data
+        return estimateSalaryFromJob(job) + ' (estimation)';
+    }
     const matches = monthlySalary.match(/(\d+[\s.]?\d*)/g);
     if (!matches) return 'Non communiqué';
 
@@ -124,6 +172,17 @@ function calculateAnnualSalary(monthlySalary) {
         return `${(annualMin / 1000).toFixed(1)}k - ${(annualMax / 1000).toFixed(1)}k €/an`;
     }
     return `${annualMin} - ${annualMax} €/an`;
+}
+
+// Generate default roadmap when data is unavailable
+function generateFallbackRoadmap(jobTitle, domain) {
+    return [
+        { title: `Stage/Alternance ${jobTitle || 'Débutant'}`, description: 'Première expérience professionnelle dans le domaine', salary: '1 200-1 600€/mois', requirements: 'Bac+3, Motivation' },
+        { title: `Junior ${jobTitle || 'Évaluateur'}`, description: '2-3 ans d\'expérience - Début de carrière', salary: '30k-40k€/an', requirements: 'Bac+4/5, Première expérience' },
+        { title: `Cadre / Responsable`, description: '5+ ans d\'expérience - Poste à responsabilité', salary: '45k-60k€/an', requirements: 'Bac+5, 3 ans expérience' },
+        { title: `Senior / Manager`, description: 'Expertise confirmée - Leadership d\'équipe', salary: '60k-90k€/an', requirements: 'Expérience, Leadership' },
+        { title: `Director / Executive`, description: 'Direction stratégique -高水平 responsibility', salary: '90k-150k€/an', requirements: 'Stratégie, Governance' }
+    ];
 }
 
 // Show AI generation modal
@@ -298,7 +357,7 @@ function displayJob(job) {
     document.getElementById('jobStartDate').textContent = formatDate(job.startDate);
 
     // Annual salary calculation
-    const annualSalary = calculateAnnualSalary(job.salary);
+    const annualSalary = calculateAnnualSalary(job.salary, job);
     document.getElementById('jobAnnualSalary').textContent = annualSalary;
 
     // Job type badge
@@ -354,7 +413,19 @@ function displayRoadmap(job) {
     if (!roadmapContainer) return;
 
     // Get roadmap based on job title analysis
-    const roadmapData = getRoadmapDataBasedOnTitle(job.title, job.domain, job.type);
+    let roadmapData = [];
+    try {
+        roadmapData = getRoadmapDataBasedOnTitle(job.title, job.domain, job.type) || [];
+    } catch (e) {
+        console.error('Error getting roadmap:', e);
+        roadmapData = [];
+    }
+
+    // Fallback to generic roadmap if no specific data found
+    if (!roadmapData || roadmapData.length === 0) {
+        console.log('Using fallback roadmap for job:', job.title);
+        roadmapData = generateFallbackRoadmap(job.title, job.domain);
+    }
 
     roadmapContainer.innerHTML = roadmapData.map((step, index) => `
         <div class="relative flex gap-4">
@@ -485,6 +556,42 @@ function getRoadmapDataBasedOnTitle(jobTitle, domain, type) {
     // Default career path based on domain
     console.log('Returning Default roadmap');
     const defaultRoadmap = getRoadmapData(domain, type);
+
+    // If domain is "General" or unknown, use title-based analysis
+    if (domain === 'General' || domain === 'Default' || !defaultRoadmap || defaultRoadmap.length === 0) {
+        console.log('Checking title-based roadmap for General/unknown domain');
+        // Extract potential domain from title keywords
+        const titleLower = title.toLowerCase();
+        if (titleLower.includes('data') || titleLower.includes('analyt') || titleLower.includes('business')) {
+            console.log('Title suggests Data domain');
+            return [
+                { title: 'Stage/Alternance Data', description: 'Première expérience en analyse de données', salary: '1 200-1 600€/mois', requirements: 'Bac+3, Python/SQL' },
+                { title: 'Data Analyst', description: '2-3 ans d\'expérience', salary: '35k-45k€/an', requirements: 'Bac+4/5, Excel, SQL' },
+                { title: 'Data Scientist', description: '5+ ans d\'expérience - Modélisation', salary: '50k-70k€/an', requirements: 'Machine Learning, Python' },
+                { title: 'Data Lead', description: 'Direction data - Leader d\'équipe', salary: '65k-90k€/an', requirements: 'Architecture data, Strategy' },
+                { title: 'CDO / CTO', description: 'Directeur data/tech', salary: '90k-150k€/an', requirements: 'Stratégie data globale' }
+            ];
+        }
+        if (titleLower.includes('marketing') || titleLower.includes('comm') || titleLower.includes('digital') || titleLower.includes('fashion') || titleLower.includes('retail')) {
+            console.log('Title suggests Marketing domain');
+            return [
+                { title: 'Stage/Alternance Marketing', description: 'Première expérience en marketing', salary: '1 300-1 600€/mois', requirements: 'Bac+3, Passion marketing' },
+                { title: 'Chef de Projet Marketing', description: '2-3 ans d\'expérience', salary: '38k-48k€/an', requirements: 'Bac+5, 2 ans expérience' },
+                { title: 'Marketing Manager', description: '5+ ans d\'expérience - Direction', salary: '55k-75k€/an', requirements: 'Stratégie, Budget' },
+                { title: 'Directeur Marketing', description: 'Leader marketing', salary: '70k-100k€/an', requirements: 'Team management, ROI' },
+                { title: 'CMO', description: 'Directeur marketing global', salary: '85k-150k€/an', requirements: 'Stratégie globale, Innovation' }
+            ];
+        }
+        if (titleLower.includes('human') || titleLower.includes('rh') || titleLower.includes('scolarite') || titleLower.includes('gestionnaire')) {
+            console.log('Title suggests HR domain');
+            return [
+                { title: 'Stage/Alternance RH', description: 'Première expérience en ressources humaines', salary: '1 300-1 600€/mois', requirements: 'Bac+3, Communication' },
+                { title: 'Charge de Recrutement', description: '2-3 ans d\'expérience', salary: '38k-48k€/an', requirements: 'Bac+5, 2 ans expérience' },
+                { title: 'HR Manager', description: '5+ ans d\'expérience - Direction', salary: '55k-75k€/an', requirements: 'Expertise, Leadership' },
+                { title: 'DRH', description: 'Directeur RH', salary: '80k-150k€/an', requirements: 'Stratégie globale' }
+            ];
+        }
+    }
 
     // Always return something - default roadmap has 4 items
     if (!defaultRoadmap || defaultRoadmap.length === 0) {
@@ -643,10 +750,11 @@ function displayMatchingAnalysis(matchAnalysis) {
     // Update score badge in main section
     const scoreBadge = document.getElementById('jobScoreBadge');
     if (scoreBadge) {
-        scoreBadge.textContent = `${score}% match`;
-        if (score >= 80) {
+        const displayScore = score > 0 ? score : 50; // Default to 50 if score is 0 or undefined
+        scoreBadge.textContent = `${displayScore}% match`;
+        if (displayScore >= 80) {
             scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-green-100 text-green-800 border-green-300';
-        } else if (score >= 60) {
+        } else if (displayScore >= 60) {
             scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-blue-100 text-blue-800 border-blue-300';
         } else {
             scoreBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold border bg-yellow-100 text-yellow-800 border-yellow-300';
@@ -656,10 +764,11 @@ function displayMatchingAnalysis(matchAnalysis) {
     // Update analysis section
     const scoreBar = analysisContainer.querySelector('.w-full.bg-gray-200.rounded-full.h-2 div');
     if (scoreBar) {
-        scoreBar.style.width = `${score}%`;
-        if (score >= 80) {
+        const displayScore = score > 0 ? score : 50;
+        scoreBar.style.width = `${displayScore}%`;
+        if (displayScore >= 80) {
             scoreBar.className = 'bg-green-500 h-2 rounded-full';
-        } else if (score >= 60) {
+        } else if (displayScore >= 60) {
             scoreBar.className = 'bg-blue-500 h-2 rounded-full';
         } else {
             scoreBar.className = 'bg-yellow-500 h-2 rounded-full';
@@ -668,29 +777,39 @@ function displayMatchingAnalysis(matchAnalysis) {
 
     const scoreText = analysisContainer.querySelector('.text-green-600');
     if (scoreText) {
-        scoreText.textContent = `${score}%`;
+        const displayScore = score > 0 ? score : 50;
+        scoreText.textContent = `${displayScore}%`;
     }
 
     // Matched skills
     const matchedSkillsDiv = analysisContainer.querySelector('.matched-skills');
     if (matchedSkillsDiv) {
-        matchedSkillsDiv.innerHTML = matchedSkills.length > 0 ? matchedSkills.map(skill => `
-            <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
-        `).join('') : '<span class="text-gray-500 text-sm">Aucune compétence matchée</span>';
+        if (matchedSkills.length > 0) {
+            matchedSkillsDiv.innerHTML = matchedSkills.map(skill => `
+                <span class="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
+            `).join('');
+        } else {
+            matchedSkillsDiv.innerHTML = `<span class="text-gray-500 text-sm">Aucune compétence matchée - ajoutez des compétences à votre profil</span>`;
+        }
     }
 
     // Missing skills
     const missingSkillsDiv = analysisContainer.querySelector('.missing-skills');
     if (missingSkillsDiv) {
-        missingSkillsDiv.innerHTML = missingSkills.length > 0 ? missingSkills.map(skill => `
-            <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
-        `).join('') : '<span class="text-gray-500 text-sm">Toutes les compétences sont présentes !</span>';
+        if (missingSkills.length > 0) {
+            missingSkillsDiv.innerHTML = missingSkills.map(skill => `
+                <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm font-medium">${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
+            `).join('');
+        } else {
+            missingSkillsDiv.innerHTML = `<span class="text-green-600 text-sm">Bravo ! Votre profil correspond parfaitement à l'offre.</span>`;
+        }
     }
 
     // Match percentage text
     const matchPercent = analysisContainer.querySelector('.text-green-600.font-semibold');
     if (matchPercent) {
-        matchPercent.textContent = `${score}%`;
+        const displayScore = score > 0 ? score : 50;
+        matchPercent.textContent = `${displayScore}%`;
     }
 }
 
