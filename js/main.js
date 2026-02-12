@@ -505,17 +505,14 @@ let isAnimating = false;
 function updateCarousel() {
     const slides = document.querySelectorAll('#carouselContainer > div');
 
-    // Hide all slides
-    slides.forEach((slide, index) => {
-        slide.style.transition = 'none';
+    // Hide all slides first
+    slides.forEach(slide => {
         slide.style.display = 'none';
     });
 
-    // Show only the active slide
+    // Show current slide
     const currentSlideEl = slides[currentSlide];
     currentSlideEl.style.display = 'flex';
-    currentSlideEl.style.left = '0';
-    currentSlideEl.style.right = '0';
 
     // Update dot indicators
     updateDots();
@@ -530,11 +527,11 @@ function updateDots() {
     const dots = document.querySelectorAll('.carousel-dot');
     dots.forEach((dot, index) => {
         if (index === currentSlide) {
-            dot.classList.remove('bg-white/50', 'w-3');
-            dot.classList.add('bg-white', 'w-8');
+            dot.classList.remove('bg-white/50', 'w-4');
+            dot.classList.add('bg-white', 'w-12');
         } else {
-            dot.classList.remove('bg-white', 'w-8');
-            dot.classList.add('bg-white/50', 'w-3');
+            dot.classList.remove('bg-white', 'w-12');
+            dot.classList.add('bg-white/50', 'w-4');
         }
     });
 }
@@ -551,21 +548,18 @@ function nextSlide() {
     const slides = document.querySelectorAll('#carouselContainer > div');
     const nextIndex = (currentSlide + 1) % slideCount;
 
-    // Position next slide to the right (off screen)
-    slides[nextIndex].style.left = '100vw';
-    slides[nextIndex].style.right = 'auto';
-    slides[nextIndex].style.display = 'flex';
+    // Animate current slide out to left
+    slides[currentSlide].style.transition = 'transform 0.7s ease-in-out';
+    slides[currentSlide].style.transform = 'translateX(-100vw)';
 
-    // Position current slide to the left (off screen)
-    slides[currentSlide].style.left = '-100vw';
-    slides[currentSlide].style.right = 'auto';
-    slides[currentSlide].style.transition = 'left 0.7s ease-in-out, right 0.7s ease-in-out';
+    // Prepare next slide on the right
+    slides[nextIndex].style.display = 'flex';
+    slides[nextIndex].style.transition = 'transform 0.7s ease-in-out';
+    slides[nextIndex].style.transform = 'translateX(100vw)';
 
     setTimeout(() => {
         // Show next slide in center
-        slides[nextIndex].style.left = '0';
-        slides[nextIndex].style.right = '0';
-        slides[nextIndex].style.transition = 'none';
+        slides[nextIndex].style.transform = 'translateX(0)';
         slides[currentSlide].style.display = 'none';
 
         currentSlide = nextIndex;
@@ -586,21 +580,18 @@ function prevSlide() {
     const slides = document.querySelectorAll('#carouselContainer > div');
     const prevIndex = (currentSlide - 1 + slideCount) % slideCount;
 
-    // Position prev slide to the left (off screen)
-    slides[prevIndex].style.left = '-100vw';
-    slides[prevIndex].style.right = 'auto';
-    slides[prevIndex].style.display = 'flex';
+    // Animate current slide out to right
+    slides[currentSlide].style.transition = 'transform 0.7s ease-in-out';
+    slides[currentSlide].style.transform = 'translateX(100vw)';
 
-    // Position current slide to the right (off screen)
-    slides[currentSlide].style.left = '100vw';
-    slides[currentSlide].style.right = 'auto';
-    slides[currentSlide].style.transition = 'left 0.7s ease-in-out, right 0.7s ease-in-out';
+    // Prepare prev slide on the left
+    slides[prevIndex].style.display = 'flex';
+    slides[prevIndex].style.transition = 'transform 0.7s ease-in-out';
+    slides[prevIndex].style.transform = 'translateX(-100vw)';
 
     setTimeout(() => {
         // Show prev slide in center
-        slides[prevIndex].style.left = '0';
-        slides[prevIndex].style.right = '0';
-        slides[prevIndex].style.transition = 'none';
+        slides[prevIndex].style.transform = 'translateX(0)';
         slides[currentSlide].style.display = 'none';
 
         currentSlide = prevIndex;
@@ -620,28 +611,27 @@ function goToSlide(index) {
 
     const slides = document.querySelectorAll('#carouselContainer > div');
 
-    // Position target slide
     if (index > currentSlide) {
-        // Moving forward - prepare from right
-        slides[index].style.left = '100vw';
-        slides[index].style.right = 'auto';
-    } else {
-        // Moving backward - prepare from left
-        slides[index].style.left = '-100vw';
-        slides[index].style.right = 'auto';
-    }
-    slides[index].style.display = 'flex';
+        // Moving forward
+        slides[currentSlide].style.transition = 'transform 0.7s ease-in-out';
+        slides[currentSlide].style.transform = 'translateX(-100vw)';
 
-    // Position current slide to go off screen
-    slides[currentSlide].style.left = '-100vw';
-    slides[currentSlide].style.right = 'auto';
-    slides[currentSlide].style.transition = 'left 0.7s ease-in-out, right 0.7s ease-in-out';
+        slides[index].style.display = 'flex';
+        slides[index].style.transition = 'transform 0.7s ease-in-out';
+        slides[index].style.transform = 'translateX(100vw)';
+    } else {
+        // Moving backward
+        slides[currentSlide].style.transition = 'transform 0.7s ease-in-out';
+        slides[currentSlide].style.transform = 'translateX(100vw)';
+
+        slides[index].style.display = 'flex';
+        slides[index].style.transition = 'transform 0.7s ease-in-out';
+        slides[index].style.transform = 'translateX(-100vw)';
+    }
 
     setTimeout(() => {
         // Show target slide in center
-        slides[index].style.left = '0';
-        slides[index].style.right = '0';
-        slides[index].style.transition = 'none';
+        slides[index].style.transform = 'translateX(0)';
         slides[currentSlide].style.display = 'none';
 
         currentSlide = index;
