@@ -294,12 +294,13 @@ async function createDatabase() {
         let inserted = 0;
         let failed = 0;
 
-        for (const job of SAMPLE_JOBS) {
+        for (let i = 0; i < SAMPLE_JOBS.length; i++) {
+            const job = SAMPLE_JOBS[i];
             try {
-                const id = `job_${Math.random().toString(36).substr(2, 9)}`;
+                const id = (i + 1).toString(); // Use numeric IDs starting from 1
                 await db.insertJob({ ...job, id });
                 inserted++;
-                console.log(`  ✓ Inserted: ${job.title} at ${job.company}`);
+                console.log(`  ✓ Inserted: ${job.title} at ${job.company} (ID: ${id})`);
             } catch (err) {
                 failed++;
                 console.log(`  ✗ Failed: ${job.title} - ${err.message}`);

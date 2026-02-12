@@ -39,23 +39,34 @@ function analyzeMatching(job, user) {
         }
     });
 
-    // Calculate score
-    let score = 0;
-    if (allJobSkills.length > 0) {
-        score = Math.round((matchedSkills.length / allJobSkills.length) * 100);
-    }
+    // Calculate score based on user's actual skills vs job requirements
+    // Use the job's matchScore as base if available, otherwise calculate
+    let score = job.matchScore || 0;
 
-    // Location bonus
-    if (user.profile?.location && job.location) {
-        if (user.profile.location.toLowerCase() === job.location.toLowerCase()) {
-            score = Math.min(score + 20, 100);
+    // If user has no skills in profile, use job's matchScore directly
+    if (userSkills.length === 0) {
+        score = job.matchScore || 50; // Default to job's stored score or 50
+    } else {
+        // Calculate skill coverage score
+        const skillCoverage = allJobSkills.length > 0 ? matchedSkills.length / allJobSkills.length : 0;
+        let calculatedScore = Math.round(skillCoverage * 100);
+
+        // Location bonus
+        if (user.profile?.location && job.location) {
+            if (user.profile.location.toLowerCase() === job.location.toLowerCase()) {
+                calculatedScore = Math.min(calculatedScore + 20, 100);
+            }
         }
-    }
 
-    // Type bonus
-    const preferredTypes = user.profile?.preferredTypes || ['stage', 'alternance'];
-    if (preferredTypes.includes(job.type)) {
-        score = Math.min(score + 15, 100);
+        // Type bonus
+        const preferredTypes = user.profile?.preferredTypes || ['stage', 'alternance'];
+        if (preferredTypes.includes(job.type)) {
+            calculatedScore = Math.min(calculatedScore + 15, 100);
+        }
+
+        // Use calculated score if higher than stored score (user has relevant skills)
+        // Or use stored score as baseline
+        score = calculatedScore;
     }
 
     return { score, matchedSkills, missingSkills, allJobSkills };
@@ -266,6 +277,8 @@ function closeAIGenerationModal() {
 function displayJob(job) {
     currentJob = job;
 
+    console.log('displayJob - job:', job);
+
     // Get current user for matching analysis
     const user = getCurrentUser();
 
@@ -340,8 +353,8 @@ function displayRoadmap(job) {
     const roadmapContainer = document.getElementById('jobRoadmap');
     if (!roadmapContainer) return;
 
-    // Mock roadmap based on job domain
-    const roadmapData = getRoadmapData(job.domain, job.type);
+    // Get roadmap based on job title analysis
+    const roadmapData = getRoadmapDataBasedOnTitle(job.title, job.domain, job.type);
 
     roadmapContainer.innerHTML = roadmapData.map((step, index) => `
         <div class="relative flex gap-4">
@@ -365,7 +378,137 @@ function displayRoadmap(job) {
     `).join('');
 }
 
-// Get roadmap data based on domain
+// Analyze job title to determine career path
+function getRoadmapDataBasedOnTitle(jobTitle, domain, type) {
+    const title = jobTitle ? jobTitle.toLowerCase() : '';
+
+    console.log('getRoadmapDataBasedOnTitle - jobTitle:', jobTitle, 'domain:', domain, 'title:', title);
+
+    // Always provide a default roadmap based on title analysis
+    // Tech & IT paths based on job title keywords
+    if ((domain === 'Tech & IT' || domain === 'Engineering' || domain === undefined) &&
+        (title.includes('developpeur') || title.includes('developer') || title.includes('dev') ||
+         title.includes('full stack') || title.includes('back end') || title.includes('front end'))) {
+        console.log('Returning Tech roadmap');
+        return [
+            { title: 'Stage/Alternance Développeur', description: 'Première expérience en développement web', salary: '1 200-1 600€/mois', requirements: 'Bac+3, JavaScript/HTML/CSS' },
+            { title: 'Développeur Junior', description: '2-3 ans d\'expérience', salary: '35k-45k€/an', requirements: 'Bac+4/5, Stack technique' },
+            { title: 'Développeur Senior', description: '5+ ans d\'expérience - Expert technique', salary: '50k-70k€/an', requirements: 'Architecture, Bonnes pratiques' },
+            { title: 'Tech Lead', description: 'Direction technique - Leader d\'équipe', salary: '65k-90k€/an', requirements: 'Leadership, Management d\'équipe' },
+            { title: 'CTO / CTO', description: 'Directeur technique - Stratégie tech', salary: '90k-150k€/an', requirements: 'Stratégie, Innovation' }
+        ];
+    }
+    if ((domain === 'Tech & IT' || domain === undefined) &&
+        (title.includes('data') || title.includes('analyst') || title.includes('datascience') || title.includes('business'))) {
+        console.log('Returning Data roadmap');
+        return [
+            { title: 'Stage/Alternance Data', description: 'Première expérience en analyse de données', salary: '1 200-1 600€/mois', requirements: 'Bac+3, Python/SQL' },
+            { title: 'Data Analyst', description: '2-3 ans d\'expérience', salary: '35k-45k€/an', requirements: 'Bac+4/5, Excel, SQL' },
+            { title: 'Data Scientist', description: '5+ ans d\'expérience - Modélisation', salary: '50k-70k€/an', requirements: 'Machine Learning, Python' },
+            { title: 'Data Lead', description: 'Direction data - Leader d\'équipe', salary: '65k-90k€/an', requirements: 'Architecture data, Strategy' },
+            { title: 'CDO / CTO', description: 'Directeur data/tech', salary: '90k-150k€/an', requirements: 'Stratégie data globale' }
+        ];
+    }
+    if ((domain === 'Tech & IT' || domain === undefined) &&
+        (title.includes('designer') || title.includes('ux') || title.includes('ui'))) {
+        console.log('Returning Design roadmap');
+        return [
+            { title: 'Stage/Alternance Designer', description: 'Première expérience en design digital', salary: '1 200-1 600€/mois', requirements: 'Bac+3, Figma/Adobe' },
+            { title: 'Designer Junior', description: '2-3 ans d\'expérience', salary: '35k-45k€/an', requirements: 'Bac+4/5, Portfolio solide' },
+            { title: 'Designer Senior', description: '5+ ans d\'expérience - Expert', salary: '50k-70k€/an', requirements: 'UX Research, Prototyping' },
+            { title: 'Creative Director', description: 'Direction créative', salary: '65k-90k€/an', requirements: 'Style graphique, Leadership' },
+            { title: 'Art Director', description: 'Direction artistique', salary: '75k-110k€/an', requirements: 'Vision globale, Innovation' }
+        ];
+    }
+    if ((domain === 'Tech & IT' || domain === undefined) &&
+        (title.includes('devops') || title.includes('infra') || title.includes('sys') || title.includes('cloud'))) {
+        console.log('Returning DevOps roadmap');
+        return [
+            { title: 'Stage/Alternance DevOps', description: 'Première expérience en infrastructures', salary: '1 200-1 600€/mois', requirements: 'Bac+3, Linux/Docker' },
+            { title: 'DevOps Junior', description: '2-3 ans d\'expérience', salary: '35k-45k€/an', requirements: 'Bac+4/5, Cloud AWS/Azure' },
+            { title: 'DevOps Senior', description: '5+ ans d\'expérience - CI/CD', salary: '50k-70k€/an', requirements: 'Kubernetes, Terraform' },
+            { title: 'Site Reliability Engineer', description: 'Expertise reliability', salary: '65k-90k€/an', requirements: 'Monitoring, Scalabilité' },
+            { title: 'CTO / CTO', description: 'Directeur technique', salary: '90k-150k€/an', requirements: 'Stratégie tech globale' }
+        ];
+    }
+
+    // Marketing paths
+    if ((domain === 'Marketing' || domain === undefined) &&
+        (title.includes('marketing') || title.includes('comm') || title.includes('digital'))) {
+        console.log('Returning Marketing roadmap');
+        return [
+            { title: 'Stage/Alternance Marketing', description: 'Première expérience en marketing', salary: '1 300-1 600€/mois', requirements: 'Bac+3, Passion marketing' },
+            { title: 'Chef de Projet Marketing', description: '2-3 ans d\'expérience', salary: '38k-48k€/an', requirements: 'Bac+5, 2 ans expérience' },
+            { title: 'Marketing Manager', description: '5+ ans d\'expérience - Direction', salary: '55k-75k€/an', requirements: 'Stratégie, Budget' },
+            { title: 'Directeur Marketing', description: 'Leader marketing', salary: '70k-100k€/an', requirements: 'Team management, ROI' },
+            { title: 'CMO', description: 'Directeur marketing global', salary: '85k-150k€/an', requirements: 'Stratégie globale, Innovation' }
+        ];
+    }
+    if ((domain === 'Marketing' || domain === undefined) &&
+        (title.includes('seo') || title.includes('referencement') || title.includes('traffic'))) {
+        console.log('Returning SEO roadmap');
+        return [
+            { title: 'Stage/Alternance SEO', description: 'Stage en référencement naturel', salary: '1 300-1 600€/mois', requirements: 'Bac+3, SEO tools' },
+            { title: 'SEO Specialist', description: 'Expert SEO', salary: '35k-45k€/an', requirements: 'Bac+4/5, Google Analytics' },
+            { title: 'SEO Manager', description: 'Responsable SEO', salary: '50k-65k€/an', requirements: 'Team management, Strategy' },
+            { title: 'Digital Marketing Manager', description: 'Dirigeant digital', salary: '60k-80k€/an', requirements: 'Multi-channel, ROI' },
+            { title: 'CMO', description: 'Directeur marketing', salary: '75k-120k€/an', requirements: 'Stratégie globale' }
+        ];
+    }
+
+    // Finance paths
+    if ((domain === 'Finance' || domain === undefined) &&
+        (title.includes('finance') || title.includes('analyste') || title.includes('comptable'))) {
+        console.log('Returning Finance roadmap');
+        return [
+            { title: 'Stage/Alternance Finance', description: 'Stage en analyse financière', salary: '1 400-1 700€/mois', requirements: 'Bac+4, Excel avancé' },
+            { title: 'Analyste Finance', description: '2-3 ans d\'expérience', salary: '40k-50k€/an', requirements: 'Bac+5, Modélisation' },
+            { title: 'Finance Manager', description: '5+ ans d\'expérience - Direction', salary: '60k-85k€/an', requirements: 'Expertise, Leadership' },
+            { title: 'Directeur Finance', description: 'Expert financier', salary: '80k-120k€/an', requirements: 'Stratégie, Audit' },
+            { title: 'CFO', description: 'Directeur financier', salary: '100k-200k€/an', requirements: 'Stratégie globale, Governance' }
+        ];
+    }
+
+    // Consulting paths
+    if ((domain === 'Consulting' || domain === undefined) &&
+        (title.includes('consultant'))) {
+        console.log('Returning Consulting roadmap');
+        return [
+            { title: 'Stage/Alternance Consultant', description: 'Stage en conseil', salary: '1 500-1 800€/mois', requirements: 'Bac+5, École de commerce' },
+            { title: 'Consultant Junior', description: '2-3 ans d\'expérience', salary: '45k-55k€/an', requirements: 'Bac+5, 2 ans expérience' },
+            { title: 'Consultant', description: '5+ ans d\'expérience - Senior', salary: '60k-80k€/an', requirements: 'Expertise sectorielle' },
+            { title: 'Senior Consultant', description: 'Expert senior', salary: '75k-95k€/an', requirements: 'Leadership de projet' },
+            { title: 'Partner', description: 'Dirigeant de cabinet', salary: '120k-200k€/an', requirements: 'Création de cabinet' }
+        ];
+    }
+
+    // Default career path based on domain
+    console.log('Returning Default roadmap');
+    const defaultRoadmap = getRoadmapData(domain, type);
+
+    // Always return something - default roadmap has 4 items
+    if (!defaultRoadmap || defaultRoadmap.length === 0) {
+        console.log('Default roadmap is empty, returning fallback');
+        return [
+            { title: 'Stage/Alternance', description: 'Première expérience professionnelle', salary: '1 200-1 600€/mois', requirements: 'Bac+3' },
+            { title: 'Junior', description: 'Début de carrière', salary: '30k-40k€/an', requirements: 'Bac+4' },
+            { title: 'Cadre', description: 'Experience confirmée', salary: '45k-60k€/an', requirements: 'Bac+5, 3 ans' },
+            { title: 'Senior/Manager', description: 'Poste à responsabilité', salary: '60k-90k€/an', requirements: 'Expérience' }
+        ];
+    }
+
+    // Adapt default titles to job type
+    if (title.includes('chef') || title.includes('manager') || title.includes('responsable')) {
+        return defaultRoadmap.map(step => ({
+            ...step,
+            title: step.title.replace('Junior', 'Chef de Projet').replace('Cadre', 'Responsable').replace('Senior', 'Senior Manager')
+        }));
+    }
+
+    return defaultRoadmap;
+}
+
+// Get roadmap data based on domain (fallback)
 function getRoadmapData(domain, type) {
     const roadmaps = {
         'Tech & IT': [
@@ -558,9 +701,6 @@ function logout() {
         window.location.href = 'index.html';
     }
 }
-
-// Initialize
-let currentJob = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();

@@ -236,6 +236,8 @@ function handleJobInputChange() {
     } else {
         suggestionsDiv.classList.add('hidden');
     }
+    // Filter jobs immediately when typing
+    searchJobs();
 }
 
 // Autocomplete Functions for Regions
@@ -258,18 +260,20 @@ function handleLocationInputChange() {
     } else {
         suggestionsDiv.classList.add('hidden');
     }
+    // Filter jobs immediately when typing
+    searchJobs();
 }
 
 function selectJob(job) {
     document.getElementById('searchQuery').value = job;
     document.getElementById('jobSuggestions').classList.add('hidden');
-    setTimeout(() => searchJobs(), 100);
+    searchJobs();
 }
 
 function selectLocation(region) {
     document.getElementById('location').value = region;
     document.getElementById('locationSuggestions').classList.add('hidden');
-    setTimeout(() => searchJobs(), 100);
+    searchJobs();
 }
 
 // Close suggestions when clicking outside

@@ -353,7 +353,9 @@ class DatabaseManager {
 
     async getJobById(id) {
         return new Promise((resolve, reject) => {
-            this.db.get('SELECT * FROM jobs WHERE id = ?', [id], (err, row) => {
+            // Handle numeric IDs (convert to string if needed)
+            const idStr = String(id);
+            this.db.get('SELECT * FROM jobs WHERE id = ?', [idStr], (err, row) => {
                 if (err) {
                     reject(err);
                 } else if (row) {
@@ -364,7 +366,27 @@ class DatabaseManager {
                         studyLevel: row.studyLevel ? JSON.parse(row.studyLevel) : []
                     });
                 } else {
-                    resolve(null);
+                    // Try with numeric ID if string not found (for backward compatibility)
+                    const numId = parseInt(id, 10);
+                    if (!isNaN(numId)) {
+                        // SQLite will handle numeric ID if the column is TEXT
+                        this.db.get('SELECT * FROM jobs WHERE id = ?', [numId], (err2, row2) => {
+                            if (err2) {
+                                reject(err2);
+                            } else if (row2) {
+                                resolve({
+                                    ...row2,
+                                    requirements: row2.requirements ? JSON.parse(row2.requirements) : [],
+                                    skills: row2.skills ? JSON.parse(row2.skills) : [],
+                                    studyLevel: row2.studyLevel ? JSON.parse(row2.studyLevel) : []
+                                });
+                            } else {
+                                resolve(null);
+                            }
+                        });
+                    } else {
+                        resolve(null);
+                    }
                 }
             });
         });

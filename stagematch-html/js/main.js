@@ -656,7 +656,7 @@ function displayJobs(jobs) {
         const typeClass = job.type === 'stage' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
 
         let html = `
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group">
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group" onclick="window.location.href='offre.html?id=${job.id}'">
             <div class="flex justify-between items-start mb-4">
                 <div class="flex items-center gap-3">
                     <img src="${job.companyLogo}" alt="${job.company}" class="w-12 h-12 rounded-xl object-cover">
@@ -685,14 +685,6 @@ function displayJobs(jobs) {
                 <span class="text-xs text-gray-500">${formatDate(job.postedAt)}</span>
             </div>
         </div>`;
-
-        html += `
-        <script>
-            // Initialize icons
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 0);
-        <\/script>`;
 
         grid.innerHTML += html;
     });
@@ -732,7 +724,7 @@ function displayPopularJobs() {
         const typeClass = job.type === 'stage' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
 
         let html = `
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group">
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group" onclick="window.location.href='offre.html?id=${job.id}'">
             <div class="flex justify-between items-start mb-4">
                 <div class="flex items-center gap-3">
                     <img src="${job.companyLogo}" alt="${job.company}" class="w-12 h-12 rounded-xl object-cover">
@@ -756,8 +748,6 @@ function displayPopularJobs() {
                 ${job.salary ? `<span class="text-sm font-medium text-green-600">${job.salary}</span>` : ''}
             </div>
         </div>`;
-
-        html += `<script>lucide.createIcons();<\/script>`;
         grid.innerHTML += html;
     });
 

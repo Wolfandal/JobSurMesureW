@@ -7,6 +7,191 @@ let currentUser = null;
 let cvFileKey = '';
 let lmFileKey = '';
 
+// Common skills keywords by category
+const SKILL_KEYWORDS = {
+    'JavaScript': ['javascript', 'js', 'node.js', 'nodejs', 'node', 'react', 'angular', 'vue', 'typescript', 'ts'],
+    'Python': ['python', 'django', 'flask', 'pandas', 'numpy', 'tensorflow', 'pytorch', 'django'],
+    'Java': ['java', 'spring', 'spring boot', 'hibernate', 'maven', 'gradle'],
+    'C#': ['c#', 'csharp', '.net', 'asp.net', 'entity framework', 'xamarin'],
+    'PHP': ['php', 'laravel', 'symfony', 'wordpress', 'prestashop'],
+    'SQL': ['sql', 'mysql', 'postgresql', 'postgres', 'sqlite', 'oracle', 'mongodb', 'nosql', 'mongodb'],
+    'HTML/CSS': ['html', 'css', 'sass', 'less', 'bootstrap', 'tailwind', 'bulma'],
+    'Frontend': ['frontend', 'frontend developer', 'ui', 'ux', 'react', 'vue', 'angular', 'javascript'],
+    'Backend': ['backend', 'backend developer', 'api', 'rest', 'graphql', 'node.js', 'java', 'python'],
+    'Full Stack': ['full stack', 'fullstack', 'full-stack', 'full stack developer'],
+    'DevOps': ['devops', 'ci/cd', 'jenkins', 'docker', 'kubernetes', 'aws', 'azure', 'gcp', 'terraform', 'ansible'],
+    'Data Science': ['data science', 'data analyst', 'machine learning', 'deep learning', 'ai', 'artificial intelligence', 'data modeling'],
+    'Business Intelligence': ['bi', 'business intelligence', 'power bi', 'tableau', 'looker'],
+    'Mobile': ['mobile', 'android', 'ios', 'react native', 'flutter', 'native', 'kotlin', 'swift'],
+    'Testing': ['testing', 'test', 'qa', 'automated testing', 'selenium', 'jest', 'cypress', 'unit testing'],
+    'Cloud': ['cloud', 'aws', 'azure', 'gcp', 'cloud computing', 'serverless'],
+    'Security': ['security', 'cybersecurity', 'penetration testing', 'ethics hacking', 'encryption'],
+    'Design': ['design', 'designer', 'figma', 'photoshop', 'illustrator', 'adobe', 'graphic design', 'ui design', 'ux design'],
+    'Communication': ['communication', 'english', 'français', 'speaker', 'presentation', 'marketing', 'seo', 'social media'],
+    'Management': ['management', 'manager', 'scrum', 'agile', 'leader', 'team lead', 'product owner'],
+    'Finance': ['finance', 'financial', 'accounting', ' comptabilité', 'economie', 'economics'],
+    'Marketing': ['marketing', 'digital marketing', 'content marketing', 'seo', 'sem', 'social media marketing']
+};
+
+// Skills pattern for extraction
+const TECH_SKILLS_PATTERN = /\b(javascript|js|node\.?js|react|angular|vue|typescript|python|java|c[#\s]?|\.net|php|sql|mysql|postgres|html|css|bootstrap|docker|kubernetes|aws|azure|gcp|git|mongodb|nosql|api|rest|graphql|security|testing|qa|jira|agile|scrum|devops|flutter|react\s*native|swift|kotlin|ui|ux|figma|photoshop|power\s*bi|tableau|machine\s*learning|data\s*science|data\s*analyst)\b/gi;
+
+// Analyze CV text and extract skills
+function analyzeCVText(cvText) {
+    if (!cvText || typeof cvText !== 'string') {
+        return { skills: [], extractedText: '', analysis: {} };
+    }
+
+    // Convert to lowercase for matching
+    const textLower = cvText.toLowerCase();
+
+    // Extract skills using pattern matching
+    const foundSkills = new Set();
+
+    // Check each skill category
+    for (const [skillName, keywords] of Object.entries(SKILL_KEYWORDS)) {
+        for (const keyword of keywords) {
+            if (textLower.includes(keyword)) {
+                foundSkills.add(skillName);
+                break;
+            }
+        }
+    }
+
+    // Also extract using regex pattern
+    const regexMatches = cvText.match(TECH_SKILLS_PATTERN);
+    if (regexMatches) {
+        regexMatches.forEach(match => {
+            // Normalize the match
+            const normalized = match.toLowerCase().trim();
+            // Map common variations to standard names
+            const skillMap = {
+                'js': 'JavaScript',
+                'nodejs': 'JavaScript',
+                'node.js': 'JavaScript',
+                'node': 'JavaScript',
+                'c#': 'C#',
+                'c# ': 'C#',
+                '.net': 'C#',
+                'csharp': 'C#',
+                'postgres': 'SQL',
+                'sql': 'SQL',
+                'mongodb': 'SQL',
+                'nosql': 'SQL',
+                'rest api': 'Backend',
+                'graphql': 'Backend',
+                'react native': 'Mobile',
+                'reactnative': 'Mobile',
+                'swift ': 'Mobile',
+                'kotlin ': 'Mobile',
+                'ai': 'Data Science',
+                'ml': 'Data Science',
+                'machine learning': 'Data Science',
+                'data science': 'Data Science',
+                'data analyst': 'Data Science',
+                'business intelligence': 'Business Intelligence',
+                'bi': 'Business Intelligence',
+                'digital marketing': 'Marketing',
+                'social media': 'Marketing',
+                'seo': 'Marketing',
+                'sem': 'Marketing',
+                'content marketing': 'Marketing',
+                'pentesting': 'Security',
+                'penetration testing': 'Security',
+                'ethical hacking': 'Security',
+                'cybersecurity': 'Security',
+                'information security': 'Security'
+            };
+            if (skillMap[normalized]) {
+                foundSkills.add(skillMap[normalized]);
+            }
+        });
+    }
+
+    // Extract education level
+    const educationPatterns = [
+        /bac\s*\+?\s*[0-6+]/gi,
+        /master|master['\s]?s?|mastère/gi,
+        /ingénieur|ingénierie/gi,
+        /bachelor|baccalauréat/gi,
+        /dut|bts|licence/gi
+    ];
+    const educationFound = [];
+    educationPatterns.forEach(pattern => {
+        const match = cvText.match(pattern);
+        if (match) educationFound.push(match[0]);
+    });
+
+    // Extract experience years
+    let experienceYears = 0;
+    const expPatterns = [
+        /(\d+)\s*(ans| années?| an| year| years)/gi,
+        /(\d+)\s*(d'|de\s*)?expérience/gi
+    ];
+    expPatterns.forEach(pattern => {
+        const match = cvText.match(pattern);
+        if (match && match[1]) {
+            experienceYears = Math.max(experienceYears, parseInt(match[1]));
+        }
+    });
+
+    // Extract email
+    const emailMatch = cvText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    const email = emailMatch ? emailMatch[0] : '';
+
+    // Extract phone
+    const phoneMatch = cvText.match(/(\+?\d{1,3}[\s-]?)?(\d{2}[\s-]?\d{2}[\s-]?\d{2}[\s-]?\d{2}[\s-]?\d{2})/);
+    const phone = phoneMatch ? phoneMatch[0] : '';
+
+    // Extract name (simple heuristic - first line or line with "Nom" or "Nom et prénom")
+    const nameMatch = cvText.match(/(?:Nom\s*[:\-]?\s*|Prénom\s*[:\-]?\s*)?([A-Z][a-zÀ-ÿ]+(?:\s+[A-Z][a-zÀ-ÿ]+){0,2})/i);
+    const potentialName = nameMatch ? nameMatch[1] : '';
+
+    return {
+        skills: Array.from(foundSkills),
+        extractedText: cvText.substring(0, 500), // First 500 chars as preview
+        analysis: {
+            education: educationFound,
+            experienceYears: experienceYears,
+            email: email,
+            phone: phone,
+            potentialName: potentialName
+        }
+    };
+}
+
+// Function to extract text from PDF (client-side with pdf.js)
+async function extractTextFromPDF(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = e.target.result;
+                // Try to parse as PDF
+                if (data && typeof data === 'string') {
+                    resolve(data);
+                } else {
+                    resolve('');
+                }
+            } catch (err) {
+                resolve('');
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Fallback method to read file content
+async function readFileContent(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            resolve(e.target.result);
+        };
+        reader.readAsText(file);
+    });
+}
+
 // Get current user from session
 function getCurrentUser() {
     const user = sessionStorage.getItem('jobsurmesure_user');
@@ -316,31 +501,60 @@ async function uploadCv(event) {
     }
 
     if (currentUser) {
-        // In a real app, this would upload to a server
-        const reader = new FileReader();
-        reader.onload = async function(e) {
+        // Show analysis status
+        const cvFileStatusEl = document.getElementById('cvFileStatus');
+        if (cvFileStatusEl) {
+            cvFileStatusEl.textContent = 'Analyse en cours...';
+            cvFileStatusEl.classList.remove('text-gray-500', 'text-green-600');
+            cvFileStatusEl.classList.add('text-blue-600');
+        }
+
+        try {
+            // Read the file content
+            const fileContent = await readFileContent(file);
+
+            // Analyze CV text
+            const analysis = analyzeCVText(fileContent);
+
+            // Merge extracted skills with existing skills
+            const existingSkills = Array.isArray(currentUser.profile?.skills) ? currentUser.profile.skills : [];
+            const newSkills = analysis.skills;
+
+            // Combine and deduplicate skills
+            const combinedSkills = [...new Set([...existingSkills, ...newSkills])];
+
+            console.log('CV Analysis Results:', analysis);
+            console.log('Extracted skills:', newSkills);
+
             // Store file as base64 in session storage (for immediate use)
             currentUser.profile = currentUser.profile || {};
-            currentUser.profile.cvUrl = e.target.result;
+            currentUser.profile.cvUrl = fileContent.startsWith('data:') ? fileContent : null;
             currentUser.profile.cvName = file.name;
+
+            // Update profile with extracted skills if available
+            if (newSkills.length > 0) {
+                currentUser.profile.skills = combinedSkills;
+            }
 
             // Save to local storage for persistence across refreshes
             const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
             savedFiles[cvFileKey] = {
-                url: e.target.result,
+                url: fileContent.startsWith('data:') ? fileContent : null,
                 name: file.name,
                 type: 'cv',
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                analysis: analysis
             };
             localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
 
-            // Save to server
+            // Save to server with updated skills
             try {
                 await fetch(`${API_URL}/users/${currentUser.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ profile: currentUser.profile })
                 });
+                console.log('Profile updated with extracted skills');
             } catch (err) {
                 console.warn('Could not save to server:', err);
             }
@@ -357,9 +571,9 @@ async function uploadCv(event) {
                 cvFileNameEl.textContent = file.name;
             }
             if (cvFileStatusEl) {
-                cvFileStatusEl.classList.remove('text-gray-500', 'text-red-500');
+                cvFileStatusEl.classList.remove('text-gray-500', 'text-blue-600');
                 cvFileStatusEl.classList.add('text-green-600');
-                cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+                cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR') + ' - ' + analysis.skills.length + ' compétences détectées';
             }
             if (cvFileContainer) {
                 cvFileContainer.classList.remove('hidden');
@@ -367,8 +581,65 @@ async function uploadCv(event) {
             if (cvPlaceholder) {
                 cvPlaceholder.classList.add('hidden');
             }
-        };
-        reader.readAsDataURL(file);
+
+            // Update skills input field if it exists
+            const skillsInput = document.getElementById('skillsInput');
+            if (skillsInput && newSkills.length > 0) {
+                skillsInput.value = combinedSkills.join(', ');
+            }
+
+            // Update display
+            displayUserProfile(currentUser);
+
+            // Update match scores on search page if available
+            if (typeof searchJobs === 'function') {
+                setTimeout(() => searchJobs(), 500);
+            }
+
+        } catch (err) {
+            console.error('Error analyzing CV:', err);
+            // Fallback without analysis
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                currentUser.profile = currentUser.profile || {};
+                currentUser.profile.cvUrl = e.target.result;
+                currentUser.profile.cvName = file.name;
+
+                const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+                savedFiles[cvFileKey] = {
+                    url: e.target.result,
+                    name: file.name,
+                    type: 'cv',
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
+
+                try {
+                    await fetch(`${API_URL}/users/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ profile: currentUser.profile })
+                    });
+                } catch (err) {
+                    console.warn('Could not save to server:', err);
+                }
+
+                sessionStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+                const cvFileNameEl = document.getElementById('cvFileName');
+                const cvFileStatusEl = document.getElementById('cvFileStatus');
+                const cvFileContainer = document.getElementById('cvFileContainer');
+
+                if (cvFileNameEl) cvFileNameEl.textContent = file.name;
+                if (cvFileStatusEl) {
+                    cvFileStatusEl.classList.remove('text-gray-500', 'text-blue-600');
+                    cvFileStatusEl.classList.add('text-green-600');
+                    cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+                }
+                if (cvFileContainer) cvFileContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
     } else {
         alert('Veuillez vous connecter pour uploader votre CV');
         window.location.href = 'connexion.html';
