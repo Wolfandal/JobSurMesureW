@@ -31,7 +31,21 @@
       "Bash(npx next build)",
       "Bash(git pull origin main)",
       "Bash(git config pull.rebase false)",
-      "Bash(git push origin main)"
+      "Bash(git push origin main)",
+      "Bash(node create-db.js)",
+      "Bash(node -e \"const db = require\\(''sqlite3''\\).verbose\\(\\); const fs = require\\(''fs''\\); const dbPath = require\\(''path''\\).join\\(__dirname, ''..'', ''data'', ''jobs.db''\\); if \\(fs.existsSync\\(dbPath\\)\\) { const sqliteDB = new db.Database\\(dbPath\\); sqliteDB.exec\\(''DELETE FROM jobs'', \\(err\\) => { if \\(err\\) console.error\\(err\\); else { console.log\\(''Jobs deleted''\\); sqliteDB.close\\(\\); } }\\); }\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)",
+      "Bash(taskkill /PID 45188 /F)",
+      "Bash(taskkill //F //PID 45188)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3000/api/jobs/1)",
+      "Bash(curl -s http://localhost:3000/api/jobs/999)",
+      "Bash(curl -s \"http://localhost:3000/api/jobs?userId=user_test\")",
+      "Bash(for i in 1 2 3 4 5)",
+      "Bash(do echo \"=== Job $i ===\")",
+      "Bash(curl -s \"http://localhost:3000/api/jobs/$i\")",
+      "Bash(done)"
     ]
   }
 }
