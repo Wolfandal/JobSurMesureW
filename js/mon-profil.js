@@ -514,145 +514,93 @@ async function uploadCv(event) {
     }
 
     if (currentUser) {
-        // Show analysis status
-        const cvFileStatusEl = document.getElementById('cvFileStatus');
-        if (cvFileStatusEl) {
-            cvFileStatusEl.textContent = 'Analyse en cours...';
-            cvFileStatusEl.classList.remove('text-gray-500', 'text-green-600');
-            cvFileStatusEl.classList.add('text-blue-600');
-        }
+        // Use FileReader to read as DataURL for proper base64 encoding
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
 
-        try {
-            // Read the file content
-            const fileContent = await readFileContent(file);
+            console.log('File read successfully, size:', fileContent.length);
 
-            // Analyze CV text
-            const analysis = analyzeCVText(fileContent);
+            // Analyze CV text for skills extraction (only for text files or simple PDF preview)
+            let newSkills = [];
+            let analysis = {};
 
-            // Merge extracted skills with existing skills
-            const existingSkills = Array.isArray(currentUser.profile?.skills) ? currentUser.profile.skills : [];
-            const newSkills = analysis.skills;
+            // Try to read as text for skill extraction
+            const textReader = new FileReader();
+            textReader.onload = function(textEvent) {
+                const textContent = textEvent.target.result;
+                analysis = analyzeCVText(textContent);
+                newSkills = analysis.skills;
 
-            // Combine and deduplicate skills
-            const combinedSkills = [...new Set([...existingSkills, ...newSkills])];
+                console.log('CV Analysis Results:', analysis);
+                console.log('Extracted skills:', newSkills);
 
-            console.log('CV Analysis Results:', analysis);
-            console.log('Extracted skills:', newSkills);
-
-            // Store file as base64 in session storage (for immediate use)
-            currentUser.profile = currentUser.profile || {};
-            currentUser.profile.cvUrl = fileContent.startsWith('data:') ? fileContent : null;
-            currentUser.profile.cvName = file.name;
-
-            // Update profile with extracted skills if available
-            if (newSkills.length > 0) {
-                currentUser.profile.skills = combinedSkills;
-            }
-
-            // Save to local storage for persistence across refreshes
-            const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
-            savedFiles[cvFileKey] = {
-                url: fileContent.startsWith('data:') ? fileContent : null,
-                name: file.name,
-                type: 'cv',
-                timestamp: new Date().toISOString(),
-                analysis: analysis
-            };
-            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
-
-            // Save to server with updated skills
-            try {
-                await fetch(`${API_URL}/users/${currentUser.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile: currentUser.profile })
-                });
-                console.log('Profile updated with extracted skills');
-            } catch (err) {
-                console.warn('Could not save to server:', err);
-            }
-
-            localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
-
-            // Update UI
-            const cvFileNameEl = document.getElementById('cvFileName');
-            const cvFileStatusEl = document.getElementById('cvFileStatus');
-            const cvFileContainer = document.getElementById('cvFileContainer');
-            const cvPlaceholder = document.getElementById('cvPlaceholder');
-
-            if (cvFileNameEl) {
-                cvFileNameEl.textContent = file.name;
-            }
-            if (cvFileStatusEl) {
-                cvFileStatusEl.classList.remove('text-gray-500', 'text-blue-600');
-                cvFileStatusEl.classList.add('text-green-600');
-                cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR') + ' - ' + analysis.skills.length + ' compétences détectées';
-            }
-            if (cvFileContainer) {
-                cvFileContainer.classList.remove('hidden');
-            }
-            if (cvPlaceholder) {
-                cvPlaceholder.classList.add('hidden');
-            }
-
-            // Update skills input field if it exists
-            const skillsInput = document.getElementById('skillsInput');
-            if (skillsInput && newSkills.length > 0) {
-                skillsInput.value = combinedSkills.join(', ');
-            }
-
-            // Update display
-            displayUserProfile(currentUser);
-
-            // Update match scores on search page if available
-            if (typeof searchJobs === 'function') {
-                setTimeout(() => searchJobs(), 500);
-            }
-
-        } catch (err) {
-            console.error('Error analyzing CV:', err);
-            // Fallback without analysis
-            const reader = new FileReader();
-            reader.onload = async function(e) {
+                // Store file as base64 (for immediate use)
                 currentUser.profile = currentUser.profile || {};
-                currentUser.profile.cvUrl = e.target.result;
+                currentUser.profile.cvUrl = fileContent;
                 currentUser.profile.cvName = file.name;
 
+                // Update profile with extracted skills if available
+                if (newSkills.length > 0) {
+                    const existingSkills = Array.isArray(currentUser.profile?.skills) ? currentUser.profile.skills : [];
+                    const combinedSkills = [...new Set([...existingSkills, ...newSkills])];
+                    currentUser.profile.skills = combinedSkills;
+                }
+
+                // Save to local storage for persistence across refreshes
                 const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
                 savedFiles[cvFileKey] = {
-                    url: e.target.result,
+                    url: fileContent,
                     name: file.name,
                     type: 'cv',
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    analysis: analysis
                 };
                 localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
 
-                try {
-                    await fetch(`${API_URL}/users/${currentUser.id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ profile: currentUser.profile })
-                    });
-                } catch (err) {
-                    console.warn('Could not save to server:', err);
-                }
-
                 localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
 
+                console.log('User saved to localStorage:', currentUser.email);
+                console.log('Files saved:', Object.keys(savedFiles));
+
+                // Update UI
                 const cvFileNameEl = document.getElementById('cvFileName');
                 const cvFileStatusEl = document.getElementById('cvFileStatus');
                 const cvFileContainer = document.getElementById('cvFileContainer');
+                const cvPlaceholder = document.getElementById('cvPlaceholder');
 
-                if (cvFileNameEl) cvFileNameEl.textContent = file.name;
+                if (cvFileNameEl) {
+                    cvFileNameEl.textContent = file.name;
+                }
                 if (cvFileStatusEl) {
                     cvFileStatusEl.classList.remove('text-gray-500', 'text-blue-600');
                     cvFileStatusEl.classList.add('text-green-600');
-                    cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR');
+                    cvFileStatusEl.textContent = 'Uploadé le ' + new Date().toLocaleDateString('fr-FR') + ' - ' + newSkills.length + ' compétences détectées';
                 }
-                if (cvFileContainer) cvFileContainer.classList.remove('hidden');
+                if (cvFileContainer) {
+                    cvFileContainer.classList.remove('hidden');
+                }
+                if (cvPlaceholder) {
+                    cvPlaceholder.classList.add('hidden');
+                }
+
+                // Update skills input field if it exists
+                const skillsInput = document.getElementById('skillsInput');
+                if (skillsInput && newSkills.length > 0) {
+                    skillsInput.value = combinedSkills.join(', ');
+                }
+
+                // Update display
+                displayUserProfile(currentUser);
+
+                // Update match scores on search page if available
+                if (typeof searchJobs === 'function') {
+                    setTimeout(() => searchJobs(), 500);
+                }
             };
-            reader.readAsDataURL(file);
-        }
+            textReader.readAsText(file);
+        };
+        reader.readAsDataURL(file);
     } else {
         alert('Veuillez vous connecter pour uploader votre CV');
         window.location.href = 'connexion.html';
