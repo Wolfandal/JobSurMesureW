@@ -230,29 +230,31 @@ async function loadUserProfile() {
 
     displayUserProfile(currentUser);
 
+    // Update localStorage with current user to ensure consistency
+    localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
     // Optional: try to sync with server (silent fail if server not available)
     try {
         const response = await fetch(`${API_URL}/users/${currentUser.id}`);
         const data = await response.json();
         console.log('API Response:', data);
 
-        if (data.success) {
-            const user = data.user;
-            // Update localStorage with server data if available
-            if (user.profile?.cvUrl && !savedFiles[cvFileKey]) {
+        if (data.success && data.user) {
+            // Only update from server if we don't have CV/LM yet
+            if (!savedFiles[cvFileKey] && data.user.profile?.cvUrl) {
                 console.log('CV found on server, saving to localStorage...');
                 savedFiles[cvFileKey] = {
-                    url: user.profile.cvUrl,
-                    name: user.profile.cvName || 'CV_uploadé.pdf',
+                    url: data.user.profile.cvUrl,
+                    name: data.user.profile.cvName || 'CV_uploadé.pdf',
                     type: 'cv',
                     timestamp: new Date().toISOString()
                 };
             }
-            if (user.profile?.coverLetterUrl && !savedFiles[lmFileKey]) {
+            if (!savedFiles[lmFileKey] && data.user.profile?.coverLetterUrl) {
                 console.log('LM found on server, saving to localStorage...');
                 savedFiles[lmFileKey] = {
-                    url: user.profile.coverLetterUrl,
-                    name: user.profile.lmName || 'LM_uploadée.pdf',
+                    url: data.user.profile.coverLetterUrl,
+                    name: data.user.profile.lmName || 'LM_uploadée.pdf',
                     type: 'lm',
                     timestamp: new Date().toISOString()
                 };
