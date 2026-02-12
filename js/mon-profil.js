@@ -376,13 +376,12 @@ function previewCv() {
     // Update modal title and filename
     const cvModalTitle = document.getElementById('cvModalTitle');
     const cvModalFilename = document.getElementById('cvModalFilename');
-    const cvFileNameEl = document.getElementById('cvFileName');
 
     if (cvModalTitle) {
-        cvModalTitle.textContent = `${currentUser.firstName} ${currentUser.lastName} - CV`;
+        cvModalTitle.textContent = `Mon CV`;
     }
-    if (cvModalFilename && cvFileNameEl) {
-        cvModalFilename.textContent = cvFileNameEl.textContent;
+    if (cvModalFilename) {
+        cvModalFilename.textContent = currentUser.profile.cvName || 'CV_uploadé.pdf';
     }
 
     document.getElementById('cvPreviewFrame').src = cvUrl;
@@ -406,13 +405,12 @@ function previewLm() {
     // Update modal title and filename
     const cvModalTitle = document.getElementById('cvModalTitle');
     const cvModalFilename = document.getElementById('cvModalFilename');
-    const lmFileNameEl = document.getElementById('lmFileName');
 
     if (cvModalTitle) {
-        cvModalTitle.textContent = `${currentUser.firstName} ${currentUser.lastName} - Lettre de motivation`;
+        cvModalTitle.textContent = `Lettre de motivation`;
     }
-    if (cvModalFilename && lmFileNameEl) {
-        cvModalFilename.textContent = lmFileNameEl.textContent;
+    if (cvModalFilename) {
+        cvModalFilename.textContent = currentUser.profile.lmName || 'LM_uploadée.pdf';
     }
 
     document.getElementById('cvPreviewFrame').src = lmUrl;
@@ -452,6 +450,42 @@ function deleteLm() {
         }
         if (lmFileContainer) lmFileContainer.classList.add('hidden');
         if (lmPlaceholder) lmPlaceholder.classList.remove('hidden');
+    }
+}
+
+// Delete CV
+function deleteCv() {
+    if (confirm('Voulez-vous vraiment supprimer votre CV ?')) {
+        // Remove from user profile
+        if (currentUser && currentUser.profile) {
+            delete currentUser.profile.cvUrl;
+            delete currentUser.profile.cvName;
+        }
+
+        // Remove from localStorage
+        const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+        if (savedFiles[cvFileKey]) {
+            delete savedFiles[cvFileKey];
+            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
+        }
+
+        // Update localStorage user
+        localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+        // Update UI
+        const cvFileNameEl = document.getElementById('cvFileName');
+        const cvFileStatusEl = document.getElementById('cvFileStatus');
+        const cvFileContainer = document.getElementById('cvFileContainer');
+        const cvPlaceholder = document.getElementById('cvPlaceholder');
+
+        if (cvFileNameEl) cvFileNameEl.textContent = 'Mon CV.pdf';
+        if (cvFileStatusEl) {
+            cvFileStatusEl.classList.remove('text-green-600');
+            cvFileStatusEl.classList.add('text-gray-500');
+            cvFileStatusEl.textContent = 'Uploadé le --/--/----';
+        }
+        if (cvFileContainer) cvFileContainer.classList.add('hidden');
+        if (cvPlaceholder) cvPlaceholder.classList.remove('hidden');
     }
 }
 
