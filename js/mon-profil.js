@@ -621,7 +621,7 @@ async function uploadLm(event) {
         // In a real app, this would upload to a server
         const reader = new FileReader();
         reader.onload = async function(e) {
-            // Store file as base64 in session storage (for immediate use)
+            // Store file as base64 in localStorage (for immediate use and persistence)
             currentUser.profile = currentUser.profile || {};
             currentUser.profile.coverLetterUrl = e.target.result;
             currentUser.profile.lmName = file.name;
