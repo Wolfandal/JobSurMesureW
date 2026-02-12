@@ -1,6 +1,6 @@
 // Preparation Entretien Page JavaScript
 
-// Mock QCM data
+// Mock QCM data - adaptée pour Développeur Full Stack
 const qcmData = [
     {
         id: 1,
@@ -29,7 +29,7 @@ const qcmData = [
     {
         id: 3,
         question: "Pourquoi voulez-vous travailler chez TechStartup ?",
-    options: [
+        options: [
             "Parce que vous cherchez un stage et vous n'avez pas eu d'autres propositions",
             "Parce que vous admirez l'innovation et la culture d'entreprise",
             "Parce que c'est proche de chez vous",
@@ -61,6 +61,86 @@ const qcmData = [
         ],
         correctAnswer: 1,
         explanation: "La communication calme et l'écoute sont les clés de la résolution de conflits"
+    }
+];
+
+// QCM données alternatives pour un autre type de poste (ex: Marketing)
+const qcmDataMarketing = [
+    {
+        id: 1,
+        question: "Comment mesurez-vous le succès d'une campagne marketing ?",
+        options: [
+            "Au nombre de publications",
+            "À l'engagement et au ROI",
+            "Au nombre de likes",
+            "À la créativité des contenus"
+        ],
+        correctAnswer: 1,
+        explanation: "Les indicateurs clés de performance (KPI) comme l'engagement et le ROI sont les plus pertinents"
+    },
+    {
+        id: 2,
+        question: "Quel outil utilisez-vous principalement pour l'analyse de données ?",
+        options: [
+            "Photoshop",
+            "Google Analytics",
+            "InDesign",
+            "Premier Pro"
+        ],
+        correctAnswer: 1,
+        explanation: "Google Analytics est l'outil standard pour l'analyse web et le suivi des campagnes"
+    },
+    {
+        id: 3,
+        question: "Qu'est-ce qu'un buyer persona ?",
+        options: [
+            "Un client idéal type",
+            "Un outil de gestion de社群",
+            "Une stratégie de pricing",
+            "Un type de contenu vidéo"
+        ],
+        correctAnswer: 0,
+        explanation: "Un buyer persona représente le profil type de votre client idéal"
+    }
+];
+
+// QCM données alternatives pour un type de poste (ex: Data)
+const qcmDataData = [
+    {
+        id: 1,
+        question: "Quelle méthode utilisez-vous pour traiter les valeurs manquantes ?",
+        options: [
+            "Les supprimer systématiquement",
+            "Les remplacer par 0",
+            "Les imputer ou supprimer selon le contexte",
+            "Les ignorer"
+        ],
+        correctAnswer: 2,
+        explanation: "Le choix dépend du pourcentage de valeurs manquantes et du contexte des données"
+    },
+    {
+        id: 2,
+        question: "Quelle est la différence entre R² et Adjusted R² ?",
+        options: [
+            "R² est toujours plus précis",
+            "Adjusted R² pénalise le nombre de variables",
+            "Ils sont identiques",
+            "Adjusted R² n'existe pas"
+        ],
+        correctAnswer: 1,
+        explanation: "Adjusted R² prend en compte le nombre de variables pour éviter le surajustement"
+    },
+    {
+        id: 3,
+        question: "Quand utiliser un arbre de décision ?",
+        options: [
+            "Uniquement pour la classification",
+            "Pour la régression et la classification",
+            "Uniquement pour les données textuelles",
+            "Jamais avec des données numériques"
+        ],
+        correctAnswer: 1,
+        explanation: "Les arbres de décision peuvent être utilisés pour la classification et la régression"
     }
 ];
 
@@ -119,8 +199,26 @@ function resetQCM() {
     document.getElementById('qcmResult').classList.add('hidden');
 }
 
+function showQCM() {
+    const section = document.getElementById('qcmSection');
+    const introText = document.getElementById('qcmIntroText');
+    const btn = document.getElementById('showQCMBtn');
+
+    if (section && btn && introText) {
+        section.classList.remove('hidden');
+        btn.classList.add('hidden');
+        introText.textContent = "Quiz en cours - Répondez aux questions ci-dessous.";
+        // Re-display QCM if section was already shown but answers reset
+        displayQCM();
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
-    displayQCM();
+
+    const showBtn = document.getElementById('showQCMBtn');
+    if (showBtn) {
+        showBtn.addEventListener('click', showQCM);
+    }
 });

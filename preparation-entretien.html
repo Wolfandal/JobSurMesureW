@@ -138,20 +138,20 @@
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <i data-lucide="code" class="w-5 h-5 text-blue-600"></i>
-                        Questions techniques (à venir)
+                        Questions techniques
                     </h3>
-                    <p class="text-gray-600 text-sm mb-4">Cette section sera bientôt disponible avec des questions spécifiques au poste.</p>
-                    <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                    <p id="qcmIntroText" class="text-gray-600 text-sm mb-4">Testez vos connaissances avec ce quiz adapté à l'offre de Développeur Full Stack Junior.</p>
+                    <button id="showQCMBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
                         Voir la série QCM
                     </button>
                 </div>
 
-                <!-- QCM Section -->
-                <div class="bg-white rounded-xl p-6 shadow-sm">
+                <!-- QCM Section (hidden initially) -->
+                <div id="qcmSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <i data-lucide="circle-help" class="w-5 h-5 text-blue-600"></i>
-                        Quiz rapide
+                        Quiz rapide - Développeur Full Stack
                     </h3>
                     <div class="space-y-6" id="qcmContainer">
                         <!-- QCM items will be injected here -->
