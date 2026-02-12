@@ -883,8 +883,22 @@ function updateUploadContent() {
     }
 }
 
-function loadStats() {
-    // Simulated stats
+async function loadStats() {
+    try {
+        const response = await fetch('/api/stats');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Format numbers with "+" suffix
+                document.getElementById('totalJobs').textContent = data.stats.totalJobs + '+';
+                document.getElementById('totalCompanies').textContent = data.stats.totalCompanies + '+';
+                return;
+            }
+        }
+    } catch (err) {
+        console.error('Error loading stats:', err);
+    }
+    // Fallback to simulated stats if API fails
     document.getElementById('totalJobs').textContent = '1500+';
     document.getElementById('totalCompanies').textContent = '350+';
 }
