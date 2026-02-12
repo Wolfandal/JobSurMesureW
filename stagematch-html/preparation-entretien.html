@@ -157,15 +157,16 @@
                         <!-- QCM items will be injected here -->
                     </div>
                     <div class="mt-6 flex justify-end">
-                        <button onclick="submitQCM()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">Valider les réponses</button>
+                        <button onclick="submitQCM()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm hover:shadow">Valider les réponses</button>
                     </div>
-                    <div id="qcmResult" class="mt-4 p-4 rounded-xl hidden">
-                        <div class="flex items-center gap-3 mb-2">
-                            <i data-lucide="circle-check" class="w-8 h-8 text-green-600"></i>
-                            <h4 class="font-bold text-green-900">Résultat du quiz</h4>
-                        </div>
-                        <p class="text-gray-700" id="qcmScore"></p>
-                        <button onclick="resetQCM()" class="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">Recommencer le quiz</button>
+                    <div id="qcmResult" class="mt-6 rounded-xl hidden border border-gray-200">
+                        <!-- Results will be injected here -->
+                    </div>
+                    <div class="mt-6 text-center hidden" id="qcmResetContainer">
+                        <button onclick="resetQCM()" class="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline flex items-center justify-center gap-2 mx-auto">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            Recommencer le quiz
+                        </button>
                     </div>
                 </div>
 
