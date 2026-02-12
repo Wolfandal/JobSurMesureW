@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSurMesure - Trouvez votre stage ou alternance idéal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .score-excellent { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
+        .score-good { background-color: #dbeafe; color: #1e40af; border-color: #60a5fa; }
+        .score-medium { background-color: #fef3c7; color: #92400e; border-color: #fbbf24; }
+        .score-low { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">JobSurMesure</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="mon-profil.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Mon CV
+                    </a>
+                    <a href="candidatures.html" class="text-gray-600 hover:text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i> Mes candidatures
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-4" id="authLinks">
+                    <a href="connexion.html" class="text-gray-600 hover:text-blue-600 font-medium">Connexion</a>
+                    <a href="inscription.html" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors">S'inscrire</a>
+                </div>
+                <div class="hidden md:flex items-center gap-4" id="userLinks">
+                    <span id="userDisplayName" class="text-gray-600 font-medium"></span>
+                    <a href="connexion.html" class="text-red-600 hover:text-red-700 font-medium" onclick="logout(); return false;">Déconnexion</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                        <i data-lucide="menu" class="w-6 h-6" id="mobileMenuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t bg-white animate-fadeIn">
+            <div class="px-4 py-4 space-y-3">
+                <a href="recherche.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Rechercher des offres</a>
+                <a href="mon-profil.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Mon profil</a>
+                <a href="candidatures.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Mes candidatures</a>
+                <a href="connexion.html" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">Connexion</a>
+                <a href="inscription.html" class="block px-4 py-3 bg-blue-600 text-white text-center rounded-lg">S'inscrire</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Carousel Hero -->
+    <section class="relative h-[400px] md:h-[500px] overflow-hidden">
+        <div id="carouselSlides">
+            <!-- Slide 1 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white transition-all duration-700 ease-in-out opacity-100 translate-x-0">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+                    <div class="text-center w-full">
+                        <div class="text-6xl md:text-8xl mb-6">🎯</div>
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+                            Trouvez le stage parfait
+                            <span class="block text-white/90">pour lancer votre carrière</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Des milliers d'opportunités vous attendent</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-green-500 via-green-600 to-green-700 text-white transition-all duration-700 ease-in-out opacity-0 translate-x-full">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+                    <div class="text-center w-full">
+                        <div class="text-6xl md:text-8xl mb-6">💼</div>
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+                            L'alternance idéale
+                            <span class="block text-white/90">à portée de clic</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Combinez études et expérience professionnelle</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900 text-white transition-all duration-700 ease-in-out opacity-0 translate-x-full">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+                    <div class="text-center w-full">
+                        <div class="text-6xl md:text-8xl mb-6">🚀</div>
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+                            Votre avenir commence
+                            <span class="block text-white/90">aujourd'hui</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Rejoignez les entreprises qui recrutent</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-900 text-white transition-all duration-700 ease-in-out opacity-0 translate-x-full">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+                    <div class="text-center w-full">
+                        <div class="text-6xl md:text-8xl mb-6">🤖</div>
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+                            Matching intelligent
+                            <span class="block text-white/90">avec les meilleures offres</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Notre IA trouve les opportunités qui vous correspondent</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 p-3 rounded-full transition-colors">
+            <i data-lucide="chevron-left" class="w-6 h-6 text-white"></i>
+        </button>
+        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 p-3 rounded-full transition-colors">
+            <i data-lucide="chevron-right" class="w-6 h-6 text-white"></i>
+        </button>
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            <button onclick="goToSlide(0)" class="w-3 h-3 rounded-full transition-all bg-white w-8"></button>
+            <button onclick="goToSlide(1)" class="w-3 h-3 rounded-full transition-all bg-white/50"></button>
+            <button onclick="goToSlide(2)" class="w-3 h-3 rounded-full transition-all bg-white/50"></button>
+            <button onclick="goToSlide(3)" class="w-3 h-3 rounded-full transition-all bg-white/50"></button>
+        </div>
+    </section>
+
+    <!-- CV Upload Section -->
+    <section class="py-8 bg-gradient-to-r from-blue-50 to-green-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-7 h-7 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Mon CV</h3>
+                            <p class="text-sm text-gray-500">Uploadez votre CV pour des matchs personnalisés</p>
+                        </div>
+                    </div>
+                    <div id="cvUploadContent">
+                        <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-blue-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                            <i data-lucide="upload" class="w-5 h-5 text-blue-500"></i>
+                            <span class="text-blue-600 font-medium">Télécharger mon CV</span>
+                            <input type="file" accept=".pdf,.doc,.docx" class="hidden" id="cvFileInput">
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-7 h-7 text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Ma Lettre de Motivation</h3>
+                            <p class="text-sm text-gray-500">Ajoutez votre LM pour postuler plus vite</p>
+                        </div>
+                    </div>
+                    <div id="lmUploadContent">
+                        <label class="flex items-center justify-center gap-2 w-full py-3 px-4 border-2 border-dashed border-green-300 rounded-xl cursor-pointer hover:border-green-500 hover:bg-green-50 transition-colors">
+                            <i data-lucide="upload" class="w-5 h-5 text-green-500"></i>
+                            <span class="text-green-600 font-medium">Télécharger ma LM</span>
+                            <input type="file" accept=".pdf,.doc,.docx" class="hidden" id="lmFileInput">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="py-12 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">🔍 Rechercher une offre</h2>
+                <p class="text-gray-600 text-lg">Trouvez votre stage ou alternance parmi des milliers d'opportunités</p>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-6 shadow-lg max-w-5xl mx-auto">
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="flex-1 relative">
+                        <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                        <input type="text" placeholder="Métier, compétences... (ex: data, marketing)" id="searchQuery" class="search-input w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-gray-800">
+                        <div id="jobSuggestions" class="suggestions-job absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-20 hidden"></div>
+                    </div>
+                    <div class="flex-1 relative">
+                        <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                        <input type="text" placeholder="Ville ou région" id="location" class="search-input w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-gray-800">
+                        <div id="locationSuggestions" class="suggestions-location absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-20 hidden"></div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center gap-6 mb-6">
+                    <div class="flex items-center gap-6">
+                        <span class="text-sm font-medium text-gray-700">Type :</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="stageChecked" checked class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-gray-700">🎓 Stage</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="alternanceChecked" checked class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-gray-700">💼 Alternance</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-medium text-gray-700">Niveau :</label>
+                        <select id="studyLevel" class="px-4 py-2.5 rounded-xl border border-gray-200 focus:border-blue-500 outline-none">
+                            <option value="">Tous niveaux</option>
+                            <option value="bac">Bac</option>
+                            <option value="bac+1">Bac+1</option>
+                            <option value="bac+2">Bac+2</option>
+                            <option value="bac+3">Bac+3</option>
+                            <option value="bac+4">Bac+4</option>
+                            <option value="bac+5">Bac+5</option>
+                            <option value="bac+6+">Bac+6 et plus</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="searchJobs()" id="searchBtn" class="w-full bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="search" class="w-5 h-5"></i> Rechercher
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="py-12 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900" id="resultsCount"></h2>
+                <a href="recherche.html" class="text-blue-600 hover:text-blue-700 font-medium">Voir toutes les offres →</a>
+            </div>
+            <div id="jobsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Jobs will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Jobs Section -->
+    <section class="py-12 bg-gray-50 hidden" id="popularJobsSection">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-1">🔥 Offres populaires</h2>
+                    <p class="text-gray-600">Découvrez les dernières opportunités</p>
+                </div>
+                <a href="recherche.html" class="text-blue-600 hover:text-blue-700 font-medium">Voir toutes →</a>
+            </div>
+            <div id="popularJobsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Popular jobs will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center gap-16 md:gap-24 text-center">
+                <div>
+                    <div class="text-3xl md:text-4xl font-bold text-blue-600" id="totalJobs">0+</div>
+                    <div class="text-gray-600 mt-1">Offres disponibles</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-bold text-blue-600" id="totalCompanies">0+</div>
+                    <div class="text-gray-600 mt-1">Entreprises différentes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-green-500 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Prêt à lancer votre carrière ?</h2>
+            <p class="text-xl text-white/90 mb-8">Rejoignez des milliers d'étudiants qui ont trouvé leur stage ou alternance</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="inscription.html" class="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-xl font-semibold text-lg transition-colors">Créer un compte gratuit</a>
+                <a href="recherche.html" class="border-2 border-white text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-colors">Explorer les offres</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for CV Preview -->
+    <div id="cvModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Mon CV</h3>
+                        <p class="text-sm text-gray-500" id="cvFileName"></p>
+                    </div>
+                </div>
+                <button onclick="closeCvModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe id="cvPreviewFrame" src="" class="w-full h-[70vh]" title="CV Preview"></iframe>
+            </div>
+            <div class="p-4 border-t">
+                <button onclick="closeCvModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="index.html" class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">JobSurMesure</span>
+                    </a>
+                    <p class="text-gray-400 mb-6 max-w-md">La plateforme intelligente qui connecte les étudiants avec leurs opportunités de stage et d'alternance idéales grâce à l'IA.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white font-semibold mb-4">Navigation</h3>
+                    <ul class="space-y-3">
+                        <li><a href="recherche.html" class="hover:text-white transition-colors">Rechercher</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Entreprises</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Conseils carrière</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i>contact@jobstudent.fr</li>
+                        <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i>01 23 45 67 89</li>
+                        <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i>Paris, France</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2026 JobSurMesure. Tous droits réservés.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Mentions légales</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Confidentialité</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">CGU</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

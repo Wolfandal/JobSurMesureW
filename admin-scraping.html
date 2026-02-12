@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Scraping - JobSurMesure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">JobSurMesure</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-600 font-medium">Accueil</a>
+                    <a href="#" class="text-blue-600 font-medium flex items-center gap-2">
+                        <i data-lucide="settings" class="w-4 h-4"></i> Administration
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white border-b py-6">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Administration - Scraping</h1>
+            <p class="text-gray-600">Gérez la récupération des offres depuis toutes les sources</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <!-- Source Selection -->
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="globe" class="w-5 h-5 text-primary-600"></i>
+                Sources de scraping
+            </h2>
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                <button onclick="setSource('hellowork')" class="source-btn source-hellowork p-3 rounded-xl border-2 transition-all border-orange-500 bg-orange-50">
+                    <div class="text-2xl mb-1">🟠</div>
+                    <div class="font-semibold text-sm text-gray-900">HelloWork</div>
+                </button>
+                <button onclick="setSource('indeed')" class="source-btn source-indeed p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">🔵</div>
+                    <div class="font-semibold text-sm text-gray-900">Indeed</div>
+                </button>
+                <button onclick="setSource('welcome_to_the_jungle')" class="source-btn source-wttj p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">🟢</div>
+                    <div class="font-semibold text-sm text-gray-900">WTTJ</div>
+                </button>
+                <button onclick="setSource('linkedin')" class="source-btn source-linkedin p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">📘</div>
+                    <div class="font-semibold text-sm text-gray-900">LinkedIn</div>
+                </button>
+                <button onclick="setSource('jobteaser')" class="source-btn source-jobteaser p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">🟣</div>
+                    <div class="font-semibold text-sm text-gray-900">JobTeaser</div>
+                </button>
+                <button onclick="setSource('all')" class="source-btn source-all p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">🌐</div>
+                    <div class="font-semibold text-sm text-gray-900">HW + Indeed</div>
+                </button>
+                <button onclick="setSource('all_sources')" class="source-btn source-all-sources p-3 rounded-xl border-2 transition-all border-gray-200 hover:border-gray-300">
+                    <div class="text-2xl mb-1">🎯</div>
+                    <div class="font-semibold text-sm text-gray-900">Toutes (5)</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Scraping -->
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5 text-primary-600"></i>
+                Scraping rapide (1 page)
+            </h2>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="handleQuickScrape('all')" id="quickScrapeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center gap-2">
+                    <i data-lucide="rotate-cw" class="w-4 h-4 animate-spin hidden" id="quickSpinner"></i>
+                    Tout scraper (HelloWork)
+                </button>
+                <button onclick="handleQuickScrape('stage')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50">
+                    🎓 Stages
+                </button>
+                <button onclick="handleQuickScrape('alternance')" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50">
+                    💼 Alternances
+                </button>
+            </div>
+        </div>
+
+        <!-- Advanced Configuration -->
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="settings" class="w-5 h-5 text-primary-600"></i>
+                Scraping avancé
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Type d'offres</label>
+                    <select id="scrapeType" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 outline-none">
+                        <option value="all">Tous (stages + alternances)</option>
+                        <option value="stage">Stages uniquement</option>
+                        <option value="alternance">Alternances uniquement</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Localisation (optionnel)</label>
+                    <select id="location" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 outline-none">
+                        <option value="">Toutes les villes</option>
+                        <option value="Paris">Paris</option>
+                        <option value="Lyon">Lyon</option>
+                        <option value="Marseille">Marseille</option>
+                        <option value="Toulouse">Toulouse</option>
+                        <option value="Bordeaux">Bordeaux</option>
+                        <option value="Nantes">Nantes</option>
+                        <option value="Lille">Lille</option>
+                        <option value="Nice">Nice</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mots-clés (optionnel)</label>
+                    <input type="text" id="keywords" placeholder="Ex: développeur, marketing..." class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de pages par type</label>
+                    <select id="maxPages" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 outline-none">
+                        <option value="1">1 page (~20 offres)</option>
+                        <option value="2">2 pages (~40 offres)</option>
+                        <option value="3">3 pages (~60 offres)</option>
+                        <option value="5">5 pages (~100 offres)</option>
+                        <option value="10">10 pages (~200 offres)</option>
+                    </select>
+                </div>
+            </div>
+
+            <label class="flex items-center gap-3 mb-6 cursor-pointer">
+                <input type="checkbox" id="saveToDB" checked class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                <span class="text-gray-700">Sauvegarder dans la base de données</span>
+            </label>
+
+            <button onclick="handleScrape()" class="w-full bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+                <i data-lucide="rotate-cw" class="w-5 h-5" id="scrapeSpinner"></i>
+                <span id="scrapeBtnText">Scraping HelloWork</span>
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="resultSection" class="bg-white rounded-2xl shadow-sm p-6 hidden">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <i data-lucide="circle-check" class="w-5 h-5 text-green-600"></i>
+                Scraping réussi !
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-4 text-center">
+                    <p class="text-2xl font-bold text-blue-600" id="statsScraped">0</p>
+                    <p class="text-sm text-gray-600">Offres scrapées</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center">
+                    <p class="text-2xl font-bold text-green-600" id="statsSaved">0</p>
+                    <p class="text-sm text-gray-600">Sauvegardées</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center">
+                    <p class="text-lg font-semibold text-gray-800" id="statsType">Tous</p>
+                    <p class="text-sm text-gray-600">Type</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center">
+                    <p class="text-lg font-semibold text-gray-800" id="statsLocation">Toutes</p>
+                    <p class="text-sm text-gray-600">Localisation</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center">
+                    <p class="text-lg font-semibold text-gray-800" id="statsSource">HelloWork</p>
+                    <p class="text-sm text-gray-600">Source</p>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-medium text-gray-800 mb-3">Aperçu des offres :</h3>
+                <div class="space-y-2" id="previewList">
+                    <!-- Preview items will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-8 bg-blue-50 rounded-2xl p-6">
+            <h3 class="font-semibold text-blue-900 mb-3">Informations</h3>
+            <ul class="text-blue-800 space-y-2 text-sm">
+                <li>• <strong>HelloWork</strong> : Délai de 1.5s entre les requêtes</li>
+                <li>• <strong>Indeed</strong> : Délai de 2-3s entre les requêtes (protection anti-bot)</li>
+                <li>• <strong>WTTJ</strong> : Délai de 2s entre les requêtes (Startups & Cie)</li>
+                <li>• <strong>LinkedIn</strong> : Délai de 3s entre les requêtes (protection stricte)</li>
+                <li>• <strong>JobTeaser</strong> : Délai de 2s entre les requêtes (Étudiants)</li>
+                <li>• Les offres sont automatiquement dédupliquées par ID unique</li>
+                <li>• Sélectionnez "Toutes" pour maximiser le nombre d'offres récupérées</li>
+                <li>• En cas de blocage (403), attendez quelques minutes avant de réessayer</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2026 JobSurMesure. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/admin-scraping.js"></script>
+</body>
+</html>
