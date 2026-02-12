@@ -419,6 +419,42 @@ function previewLm() {
     document.getElementById('cvModal').classList.remove('hidden');
 }
 
+// Delete LM
+function deleteLm() {
+    if (confirm('Voulez-vous vraiment supprimer votre lettre de motivation ?')) {
+        // Remove from user profile
+        if (currentUser && currentUser.profile) {
+            delete currentUser.profile.coverLetterUrl;
+            delete currentUser.profile.lmName;
+        }
+
+        // Remove from localStorage
+        const savedFiles = JSON.parse(localStorage.getItem('jobsurmesure_files') || '{}');
+        if (savedFiles[lmFileKey]) {
+            delete savedFiles[lmFileKey];
+            localStorage.setItem('jobsurmesure_files', JSON.stringify(savedFiles));
+        }
+
+        // Update localStorage user
+        localStorage.setItem('jobsurmesure_user', JSON.stringify(currentUser));
+
+        // Update UI
+        const lmFileNameEl = document.getElementById('lmFileName');
+        const lmFileStatusEl = document.getElementById('lmFileStatus');
+        const lmFileContainer = document.getElementById('lmFileContainer');
+        const lmPlaceholder = document.getElementById('lmPlaceholder');
+
+        if (lmFileNameEl) lmFileNameEl.textContent = 'Ma LM.pdf';
+        if (lmFileStatusEl) {
+            lmFileStatusEl.classList.remove('text-green-600');
+            lmFileStatusEl.classList.add('text-gray-500');
+            lmFileStatusEl.textContent = 'Uploadée le --/--/----';
+        }
+        if (lmFileContainer) lmFileContainer.classList.add('hidden');
+        if (lmPlaceholder) lmPlaceholder.classList.remove('hidden');
+    }
+}
+
 // Save profile
 async function saveProfile() {
     if (!currentUser) {
