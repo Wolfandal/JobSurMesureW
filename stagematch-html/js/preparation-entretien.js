@@ -90,14 +90,11 @@ function displayQCM() {
 function submitQCM() {
     let score = 0;
     let total = qcmData.length;
-    let incorrectAnswers = [];
 
     qcmData.forEach(item => {
         const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
         if (selected && parseInt(selected.value) === item.correctAnswer) {
             score++;
-        } else if (selected) {
-            incorrectAnswers.push({ item: item, selectedOption: parseInt(selected.value) });
         }
     });
 
@@ -105,51 +102,59 @@ function submitQCM() {
     const resultDiv = document.getElementById('qcmResult');
     const scoreText = document.getElementById('qcmScore');
 
-    // Build result with explanations for wrong answers
-    let resultHtml = `
+    scoreText.innerHTML = `
         Vous avez obtenu <strong>${score}</strong> bonnes réponses sur <strong>${total}</strong>.
         <br><span class="${percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-blue-600' : 'text-yellow-600'}">
             Score : ${percentage}%
         </span>
     `;
 
-    // Add explanations for wrong answers
-    if (incorrectAnswers.length > 0) {
-        resultHtml += `<div class="mt-6 p-4 bg-gray-50 rounded-xl">`;
-        resultHtml += `<h5 class="font-bold text-gray-900 mb-3">Corrigé détaillé :</h5>`;
+    // Display feedback for each question (correct or incorrect)
+    let feedbackHtml = '<div class="mt-6 space-y-4" id="qcmFeedback">';
 
-        incorrectAnswers.forEach(({ item, selectedOption }) => {
-            resultHtml += `
-                <div class="mb-4 p-3 border border-red-200 rounded-lg bg-red-50">
-                    <div class="flex items-start gap-2">
-                        <i data-lucide="circle-x" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
-                        <div>
-                            <p class="font-medium text-red-900 text-sm mb-1">${item.question}</p>
-                            <p class="text-red-700 text-sm mb-2">
-                                Votre réponse : <span class="font-semibold">${item.options[selectedOption]}</span>
-                            </p>
-                            <div class="flex items-start gap-2">
-                                <i data-lucide="circle-check" class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5"></i>
-                                <p class="text-green-700 text-sm">
-                                    <span class="font-semibold">Bonne réponse :</span> ${item.options[item.correctAnswer]}
-                                </p>
+    qcmData.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q${item.id}"]:checked`);
+        const isSelectedCorrect = selected && parseInt(selected.value) === item.correctAnswer;
+
+        feedbackHtml += `
+            <div class="border-l-4 ${isSelectedCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'} rounded-r-lg p-4">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 mt-1">
+                        ${isSelectedCorrect
+                            ? '<i data-lucide="circle-check" class="w-5 h-5 text-green-600"></i>'
+                            : '<i data-lucide="circle-x" class="w-5 h-5 text-red-600"></i>'}
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-900 mb-2">${index + 1}. ${item.question}</p>
+
+                        ${!isSelectedCorrect ? `
+                            <div class="space-y-2 mb-3">
+                                <div class="flex items-start gap-2 text-red-700 text-sm bg-white p-2 rounded border border-red-100">
+                                    <i data-lucide="circle-alert" class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-600"></i>
+                                    <span>Votre réponse : <strong>${item.options[selected.value]}</strong></span>
+                                </div>
+                                <div class="flex items-start gap-2 text-green-700 text-sm bg-white p-2 rounded border border-green-100">
+                                    <i data-lucide="circle-check" class="w-4 h-4 flex-shrink-0 mt-0.5 text-green-600"></i>
+                                    <span>La bonne réponse est : <strong>${item.options[item.correctAnswer]}</strong></span>
+                                </div>
                             </div>
-                            <div class="mt-2 pt-2 border-t border-red-200/50">
-                                <p class="text-sm text-gray-700 italic">
-                                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                                    ${item.explanation}
-                                </p>
+                        ` : ''}
+
+                        <div class="bg-white p-3 rounded border border-blue-100">
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-600"></i>
+                                <p class="text-sm text-gray-700 italic">${item.explanation}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-        });
+            </div>
+        `;
+    });
 
-        resultHtml += `</div>`;
-    }
+    feedbackHtml += '</div>';
 
-    scoreText.innerHTML = resultHtml;
+    scoreText.innerHTML += feedbackHtml;
     resultDiv.classList.remove('hidden');
 
     // Re-init icons after dynamic content
