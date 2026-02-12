@@ -163,13 +163,19 @@ function displayApplications(applications) {
     setTimeout(() => lucide.createIcons(), 10);
 }
 
-function filterApplications(event, filter) {
-    const buttons = document.querySelectorAll('.flex.gap-2 button');
-    buttons.forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border'));
+function filterApplications(filter) {
+    const buttons = document.querySelectorAll('#filterTabs button');
+    buttons.forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-white', 'border-gray-200', 'text-gray-700');
+    });
 
-    // Find the button that was clicked and set active state
-    event.target.classList.add('bg-blue-600', 'text-white');
-    event.target.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
+    // Set active state on clicked button
+    const clickedButton = document.querySelector(`#filterTabs button[data-filter="${filter}"]`);
+    if (clickedButton) {
+        clickedButton.classList.add('bg-blue-600', 'text-white');
+        clickedButton.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
+    }
 
     let filtered = mockApplications;
     if (filter !== 'all') {
@@ -233,4 +239,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load applications
     updateStats(mockApplications);
     displayApplications(mockApplications);
+
+    // Add event listeners for filter buttons
+    const filterTabs = document.getElementById('filterTabs');
+    if (filterTabs) {
+        filterTabs.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') {
+                const filter = e.target.getAttribute('data-filter');
+                if (filter) {
+                    filterApplications(filter);
+                }
+            }
+        });
+    }
 });

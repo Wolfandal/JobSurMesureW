@@ -96,11 +96,11 @@
         </div>
 
         <!-- Filter Tabs -->
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button onclick="filterApplications('all')" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Tous</button>
-            <button onclick="filterApplications('pending')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">En attente</button>
-            <button onclick="filterApplications('interview')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Entretiens</button>
-            <button onclick="filterApplications('accepted')" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Acceptées</button>
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="filterTabs">
+            <button data-filter="all" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">Tous</button>
+            <button data-filter="pending" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">En attente</button>
+            <button data-filter="interview" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Entretiens</button>
+            <button data-filter="accepted" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 font-medium">Acceptées</button>
         </div>
 
         <!-- Applications List -->
